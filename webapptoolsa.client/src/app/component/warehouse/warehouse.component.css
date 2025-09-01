@@ -1,0 +1,11 @@
+.form-row {
+  display: display;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px; /* space between fields */
+}
+
+
+.form-row mat-form-field {
+   width: 100%;   /* each field takes equal width */
+}

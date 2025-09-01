@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "webapptoolsa.client\\webapptoolsa.client.esproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "webapptoolsA.Server\\webapptoolsA.Server.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
