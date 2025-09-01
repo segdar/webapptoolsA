@@ -26,3 +26,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/webapptoolsA.Server/.vs
+/webapptoolsA.Server/bin/Debug/net8.0
+/webapptoolsA.Server/obj
+/webapptoolsa.client/obj/Debug
+/.vs
+/webapptoolsa.client/.vscode
