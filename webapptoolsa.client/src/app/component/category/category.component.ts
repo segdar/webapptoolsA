@@ -10,11 +10,14 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Subject, takeUntil } from 'rxjs';
 import { ToolsServices } from '../../services/Tools.service';
 import { Category } from '../../models/Tools';
+import { CommonModule } from '@angular/common';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 
 @Component({
   selector: 'app-category',
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule,MatIconModule,MatButtonModule],
+  imports: [CommonModule, FormsModule,MatCheckboxModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule,MatIconModule,MatButtonModule],
   templateUrl: './category.component.html',
   styleUrl: './category.component.css'
 })
@@ -28,6 +31,10 @@ export class CategoryComponent  implements OnDestroy,AfterViewInit{
 
   data!: MatTableDataSource<Category>;
   dataNameColumns: string[] = ["id", "name", "isActived", "action"]
+  objCategory: Partial<Category> = {
+    id:null
+    
+  };
 
 
   ngAfterViewInit(): void {
@@ -50,8 +57,23 @@ export class CategoryComponent  implements OnDestroy,AfterViewInit{
     }
   }
 
-    edit(){
-    console.log("edit category")
+  
+  
+    addCategory() {
+       
+        this._toolsService.createCategory(this.objCategory).pipe(takeUntil(this._destroySubcription)).subscribe({
+          next: (data:unknown) => {
+            const tmpdata = data as Category;
+            this.data.data.push(tmpdata);
+            this.data._updateChangeSubscription();
+            this.objCategory = {};
+          },
+          error: (error) => console.log("Error in create new warehouse")
+        })
+      }
+
+    edit(obj:Partial<Category>){
+    this.objCategory = obj;
   }
 
 

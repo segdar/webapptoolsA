@@ -1,5 +1,5 @@
 interface commonTools {
-  id: number;
+  id: number | null;
   name: string;
   isActived: boolean;
 }
@@ -20,3 +20,6 @@ export interface Tools {
   objcategory: Category;
   statustools: ConditionalTools;
 }
+
+export type ToolsDto = Omit<Tools,'objcategory'|'statustools'> & { category: number,
+  status_tool: number}

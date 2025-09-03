@@ -1,26 +1,15 @@
-  <!--<div class="container form-row">
+  <div class="container form-row">
      <mat-form-field appearance="fill">
-    <mat-label>Nombre de la Sucursal</mat-label>
-    <input matInput [(ngModel)]="objWarehouse.name">
-  </mat-form-field>
-   <mat-form-field appearance="fill">
-    <mat-label>Nombre Descripción</mat-label>
-    <input matInput [(ngModel)]="objWarehouse.description">
-  </mat-form-field>
-   <mat-form-field appearance="fill">
-     <mat-label>Nombre Ubicación</mat-label>
-    <input matInput [(ngModel)]="objWarehouse.location">
+    <mat-label>Nombre</mat-label>
+    <input matInput [(ngModel)]="objCategory.name">
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Seleccionar Sucursal Padre</mat-label>
-    <select matNativeControl [(ngModel)]="objWarehouse.warehouseFatherId">
-      <option [ngValue]="null">Ninguno</option>
-      <option *ngFor="let b of lstdataWarehouse()" [ngValue]="b.code">{{ b.name}}</option>
-    </select>
-  </mat-form-field>
-    <button  mat-raised-button color="primary" (click)="addWarehouse()">Agregar</button>
-  </div>-->
+  <mat-label>Estado</mat-label>
+  <mat-checkbox [(ngModel)]="objCategory.isActived">
+  </mat-checkbox> <br>
+
+    <button  mat-raised-button color="primary" (click)="addCategory()">Agregar</button>
+  </div>
 
 
 <div class="container">
@@ -50,7 +39,7 @@
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Acciones </th>
         <td mat-cell *matCellDef="let row">
-        <button mat-mini-fab (click)="edit()" aria-label="edit">
+        <button mat-mini-fab (click)="edit(row)" aria-label="edit">
           <mat-icon>edit</mat-icon>
         </button>  
         </td>

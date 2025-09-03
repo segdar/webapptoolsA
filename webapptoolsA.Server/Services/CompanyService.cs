@@ -8,6 +8,8 @@ namespace webapptoolsA.Server.Services
     public interface ICompanyService
     {
         Task<List<CompanyModel>>  GetAllCompany();
+        Task<CompanyModel?> GetCompanyById(int id);
+        Task<CompanyModel> CreateCompany(CompanyModel company);
 
     }
 
@@ -19,6 +21,14 @@ namespace webapptoolsA.Server.Services
         {
             _context = context;
         }
+
+        public async Task<CompanyModel> CreateCompany(CompanyModel company)
+        {
+            _context.CompanyModels.Add(company);
+            await _context.SaveChangesAsync();
+            return company;
+        }
+
         public async Task<List<CompanyModel>> GetAllCompany()
         {
             try
@@ -32,6 +42,10 @@ namespace webapptoolsA.Server.Services
             }
         }
 
-       
+        public async Task<CompanyModel?> GetCompanyById(int id)
+        {
+            return await _context.CompanyModels.FindAsync(id);
+         
+        }
     }
 }

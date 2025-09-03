@@ -95,6 +95,8 @@ namespace webapptoolsA.Server.Data
                     .IsRequired();
                 entity.Property(e => e.IsActived)
                     .IsRequired();
+                entity.Property(e => e.IsConsumable)
+                .IsRequired();
             });
 
             modelBuilder.Entity<Stock>(entity =>
@@ -102,7 +104,7 @@ namespace webapptoolsA.Server.Data
                 entity.ToTable("stocks");
                 entity.HasKey(e => new { e.IdTools, e.Warehouse }); // composite key
                 entity.Property(e => e.StockQuantity);
-                entity.Property(e => e.MinStock);
+
             });
 
 

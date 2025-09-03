@@ -16,6 +16,10 @@ export class CompanyService {
     return this.http.get<CompanyDto[]>('/company');
   }
 
+    create(info:Partial<CompanyDto>) {
+          return this.http.post('/company',info);
+    }
+
   
                     
 }

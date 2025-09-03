@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using webapptoolsA.Server.Entities;
+using webapptoolsA.Server.Models;
 using webapptoolsA.Server.Services;
 
 namespace webapptoolsA.Server.Controllers
@@ -23,6 +25,48 @@ namespace webapptoolsA.Server.Controllers
         {
             var companies = await _companyService.GetAllCompany();
             return companies;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CompanyModel>> CreateCompany([FromBody] CompanyModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); 
+            }
+
+            try
+            {
+                var newCompany = await _companyService.CreateCompany(model);
+
+                return CreatedAtAction(
+                    nameof(GetCompany),
+                    new { id = newCompany.Id },  // route values
+                    newCompany                   // body of response
+                );
+            }
+            catch (DbUpdateException ex) 
+            {
+                return Conflict(new { message = "Error creating company.", detail = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Unexpected error.", detail = ex.Message });
+            }
+
+           
+        }
+
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CompanyModel>> GetCompany(int id)
+        {
+            var company = await _companyService.GetCompanyById(id);
+
+            if (company == null) return NotFound();
+
+            return company;
         }
     }
 }

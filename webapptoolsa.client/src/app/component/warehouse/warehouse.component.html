@@ -62,7 +62,7 @@
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Acciones </th>
         <td mat-cell *matCellDef="let row">
-        <button mat-mini-fab (click)="edit()" aria-label="edit">
+        <button mat-mini-fab (click)="edit(row)" aria-label="edit">
           <mat-icon>edit</mat-icon>
         </button>  
         </td>

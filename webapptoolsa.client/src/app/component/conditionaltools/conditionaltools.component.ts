@@ -11,11 +11,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { ToolsServices } from '../../services/Tools.service';
 import { ConditionalTools } from '../../models/Tools';
 import { CommonModule } from '@angular/common';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-conditionaltools',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule,MatIconModule,MatButtonModule],
+  imports: [CommonModule, FormsModule,MatCheckboxModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule,MatIconModule,MatButtonModule],
   templateUrl: './conditionaltools.component.html',
   styleUrl: './conditionaltools.component.css'
 })
@@ -29,7 +30,9 @@ export class ConditionaltoolsComponent implements OnDestroy,AfterViewInit {
   
     data!: MatTableDataSource<ConditionalTools>;
     dataNameColumns: string[] = ["id", "name", "isActived", "action"]
-  
+    objConditional: Partial<ConditionalTools> = {
+      id:null
+    };
   
     ngAfterViewInit(): void {
       this._toolsService.getStatus().pipe(takeUntil(this._destroySubcription)).subscribe({
@@ -50,6 +53,19 @@ export class ConditionaltoolsComponent implements OnDestroy,AfterViewInit {
         this.data.paginator.firstPage();
       }
     }
+
+     addConditional() {
+           
+            this._toolsService.createConditional(this.objConditional).pipe(takeUntil(this._destroySubcription)).subscribe({
+              next: (data:unknown) => {
+                const tmpdata = data as ConditionalTools;
+                this.data.data.push(tmpdata);
+                this.data._updateChangeSubscription();
+                this.objConditional= {};
+              },
+              error: (error) => console.log("Error in create new warehouse")
+            })
+          }
   
       edit(){
       console.log("edit conditional")

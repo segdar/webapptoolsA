@@ -1,3 +1,18 @@
+  <div class="container form-row">
+     <mat-form-field appearance="fill">
+    <mat-label>Nombre</mat-label>
+    <input matInput [(ngModel)]="objConditional.name">
+  </mat-form-field>
+
+  <mat-label>Estado</mat-label>
+  <mat-checkbox [(ngModel)]="objConditional.isActived">
+  </mat-checkbox> <br>
+
+    <button  mat-raised-button color="primary" (click)="addConditional()">Agregar</button>
+  </div>
+
+
+
 <div class="container">
   <mat-form-field>
     <mat-label>Filtro</mat-label>

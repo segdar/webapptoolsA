@@ -60,7 +60,6 @@ namespace webapptoolsA.Server.Controllers
         public async Task<ActionResult<Warehouse>> GetBodega(int id)
         {
             var warehouse = await _context.Warehouses
-                .Include(b => b.Children)
                 .FirstOrDefaultAsync(b => b.code == id);
 
             if (warehouse == null) return NotFound();

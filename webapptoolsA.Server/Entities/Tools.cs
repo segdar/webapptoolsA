@@ -5,7 +5,7 @@ namespace webapptoolsA.Server.Entities
     //base
     public class ToolsBase
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public int Category { get; set; }
@@ -16,13 +16,13 @@ namespace webapptoolsA.Server.Entities
         public string? Qr { get; set; }
         public decimal Cost { get; set; }
         public bool IsActived { get; set; }
-
+        public bool IsConsumable { get; set; }
         
     }
 
     public class ToolCommonBase
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Name { get; set; }
         public bool IsActived { get; set; }
     }
@@ -33,13 +33,14 @@ namespace webapptoolsA.Server.Entities
     public class StatusTool : ToolCommonBase
     {
         [JsonIgnore]
-        public ICollection<Tools> Tools { get; set; }
+        public ICollection<Tools>? Tools { get; set; }
     }
 
     public class Category : ToolCommonBase
     {
+        //public int MinStock { get; set; }
         [JsonIgnore]
-        public ICollection<Tools> Tools { get; set; }
+        public ICollection<Tools>? Tools { get; set; }
     }
 
     public class Tools : ToolsBase
@@ -54,6 +55,6 @@ namespace webapptoolsA.Server.Entities
         public int IdTools { get; set; }
         public int Warehouse { get; set; }
         public int StockQuantity { get; set; }
-        public int MinStock { get; set; }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace webapptoolsA.Server.Entities
 {
@@ -6,7 +7,7 @@ namespace webapptoolsA.Server.Entities
     public class CompanyModel
     {
         [Column("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Column("name")]
         public string Name { get; set; }
@@ -15,6 +16,7 @@ namespace webapptoolsA.Server.Entities
         [Column("contant_info")]
         public string ContactInfo { get; set; }
 
+        [JsonIgnore]
         public ICollection<Warehouse> Warehouses { get; set; } = new List<Warehouse>();
     }
 }

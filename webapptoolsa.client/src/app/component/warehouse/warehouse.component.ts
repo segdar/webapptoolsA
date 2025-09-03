@@ -36,8 +36,7 @@ export class WarehouseComponent implements OnDestroy,AfterViewInit{
       location:'',
       description:'',
       companyId: 1,
-      isActived:true,
-      warehouseFatherId: null
+      isActived:true
     }
 
 
@@ -63,13 +62,20 @@ export class WarehouseComponent implements OnDestroy,AfterViewInit{
   }
 
   addWarehouse() {
-    this._warehouseService.create(this.objWarehouse).subscribe({
-      next: (data:unknown) => console.log("datares",data)
+   
+    this._warehouseService.create(this.objWarehouse).pipe(takeUntil(this._destroySubcription)).subscribe({
+      next: (data:unknown) => {
+        const tmpdata = data as Warehouse;
+        this.data.data.push(tmpdata);
+        this.data._updateChangeSubscription();
+        this.objWarehouse = {};
+      },
+      error: (error) => console.log("Error in create new warehouse")
     })
   }
 
-  edit(){
-    console.log("edit company")
+  edit(obj:Partial<Warehouse>){
+    this.objWarehouse = obj;
   }
 
   ngOnDestroy(): void {

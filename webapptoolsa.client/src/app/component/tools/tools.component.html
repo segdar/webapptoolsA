@@ -1,3 +1,57 @@
+  <div class="container form-row">
+     <mat-form-field appearance="fill">
+    <mat-label>Nombre</mat-label>
+    <input matInput [(ngModel)]="objTools.name">
+  </mat-form-field>
+   <mat-form-field appearance="fill">
+    <mat-label>Descripción</mat-label>
+    <input matInput [(ngModel)]=" objTools.description">
+  </mat-form-field>
+   <mat-form-field appearance="fill">
+     <mat-label>Ubicación</mat-label>
+    <input matInput [(ngModel)]=" objTools.location">
+  </mat-form-field>
+   <mat-form-field appearance="fill">
+     <mat-label>Proveedor</mat-label>
+    <input matInput [(ngModel)]=" objTools.provider">
+  </mat-form-field>
+   <mat-form-field appearance="fill">
+     <mat-label>Codigo de Barra</mat-label>
+    <input matInput [(ngModel)]=" objTools.barcode">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+     <mat-label>QR</mat-label>
+    <input matInput [(ngModel)]=" objTools.qr">
+  </mat-form-field>
+
+   <mat-form-field appearance="fill">
+     <mat-label>Costo</mat-label>
+    <input matInput [(ngModel)]=" objTools.cost">
+  </mat-form-field>
+   <mat-form-field appearance="fill">
+    <mat-label>Seleccionar Categoria</mat-label>
+    <select matNativeControl [(ngModel)]="objTools.category">
+      <option [ngValue]="null">Ninguno</option>
+      <option *ngFor="let b of lstdataCategory()" [ngValue]="b.id">{{ b.name}}</option>
+    </select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Seleccionar Estado</mat-label>
+    <select matNativeControl [(ngModel)]="objTools.status_tool">
+      <option [ngValue]="null">Ninguno</option>
+      <option *ngFor="let b of lstdataConditional()" [ngValue]="b.id">{{ b.name}}</option>
+    </select>
+  </mat-form-field>
+
+  <mat-label>Activo</mat-label>
+  <mat-checkbox [(ngModel)]="objTools.isActived">
+  </mat-checkbox> <br>
+
+
+    <button  mat-raised-button color="primary" (click)="addTools()">Agregar</button>
+  </div>
+
+
 <div class="container">
   <mat-form-field>
     <mat-label>Filtro</mat-label>
@@ -59,7 +113,7 @@
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Acciones </th>
         <td mat-cell *matCellDef="let row">
-        <button mat-mini-fab (click)="edit()" aria-label="edit">
+        <button mat-mini-fab (click)="edit(row)" aria-label="edit">
           <mat-icon>edit</mat-icon>
         </button>  
         </td>

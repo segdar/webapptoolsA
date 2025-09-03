@@ -9,12 +9,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-company',
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule,MatIconModule,MatButtonModule],
+  imports: [CommonModule,FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule,MatIconModule,MatButtonModule],
   templateUrl: './company.component.html',
   styleUrl: './company.component.css',
   
@@ -26,7 +27,7 @@ export class CompanyComponent implements OnDestroy,AfterViewInit {
  
   data!:MatTableDataSource<CompanyDto>;
   dataNameColumns: string[] = ["id", "name", "address","contactInfo","action"]
-  
+  objCompany:Partial<CompanyDto>={}
 
   private _companyService = inject(CompanyService)
   private _destroySubcription = new Subject<void>();
@@ -55,8 +56,21 @@ export class CompanyComponent implements OnDestroy,AfterViewInit {
     }
   }
 
-  edit(){
-    console.log("edit company")
+  addCompany() {
+     
+      this._companyService.create(this.objCompany).pipe(takeUntil(this._destroySubcription)).subscribe({
+        next: (data:unknown) => {
+          const tmpdata = data as CompanyDto;
+          this.data.data.push(tmpdata);
+          this.data._updateChangeSubscription();
+          this.objCompany = {};
+        },
+        error: (error) => console.log("Error in create new warehouse")
+      })
+    }
+
+  edit(obj:Partial<CompanyDto>){
+    this.objCompany = obj;
   }
 
   ngOnDestroy(): void {
