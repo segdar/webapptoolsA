@@ -31,4 +31,3 @@ yarn-error.log*
 /webapptoolsA.Server/obj
 /webapptoolsa.client/obj/Debug
 /.vs
-/webapptoolsa.client/.vscode
