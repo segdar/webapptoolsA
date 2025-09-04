@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/Auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,18 +13,24 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  constructor(private router: Router) {}
+  constructor(private router: Router,private _auth:AuthService) {}
 
   onSubmit() {
     if (this.email && this.password) {
       // Here you can call your API for login
-      console.log('Email:', this.email);
-      console.log('Password:', this.password);
-      this.router.navigate(['/company']);
-      alert('Login successful!');
+      this._auth.getVerification({Username:this.email.trim(),Password:this.password.trim()}).subscribe({
+        next: (data) => {
+          this.router.navigate(['/company']);
+        }, 
+        error: (error)=> {
+          console.log("error",error);
+           alert('Usuario or constraseña invalida');
+        }
+      })
+      
 
     } else {
-      alert('Please fill in all fields.');
+      alert('Usuario or constraseña invalida');
     }
   }
 }

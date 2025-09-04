@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using webapptoolsA.Server.Entities;
 
+
 namespace webapptoolsA.Server.Data
 {
 
@@ -15,9 +16,8 @@ namespace webapptoolsA.Server.Data
         public DbSet<Tools> ToolsModels { get; set; }
         public DbSet<Category> CategoryModels { get; set; }
         public DbSet<StatusTool> StatusToolModels { get; set; }
-        
         public DbSet<Stock> StockModels { get; set; }
-
+        public DbSet<User> UserModels { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Warehouse>(entity =>
@@ -106,6 +106,30 @@ namespace webapptoolsA.Server.Data
                 entity.Property(e => e.StockQuantity);
 
             });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("users");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Username)
+                      .HasMaxLength(100)
+                      .IsRequired()
+                      .HasColumnName("username");
+                entity.Property(e => e.Role)
+                      .HasMaxLength(50)
+                      .HasColumnName("role");
+                entity.Property(e => e.IsActived)
+                      .HasColumnName("isactived");
+                entity.Property(e => e.Barcode)
+                      .HasMaxLength(200)
+                      .HasColumnName("barcode");
+                entity.Property(e => e.Qr)
+                      .HasMaxLength(200)
+                      .HasColumnName("Qr");
+                entity.Property(e => e.Password)
+                      .HasColumnName("password");
+            });
+
 
 
 
