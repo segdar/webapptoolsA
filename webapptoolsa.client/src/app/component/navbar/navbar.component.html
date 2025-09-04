@@ -1,0 +1,55 @@
+ <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" ></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" [routerLink]="['company']"  aria-current="Empresas">Empresas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['warehouse']"  aria-current="sucursales">Sucurales</a>
+          </li>
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown" aria-expanded="false">
+           Herramientas
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" [routerLink]="['category']">Categoria</a></li>
+            <li><a class="dropdown-item" [routerLink]="['conditional']">Estados</a></li>
+            <li><a class="dropdown-item" [routerLink]="['tools']">Herramienta</a></li>
+          </ul>
+          </li>
+
+           <li class="nav-item">
+            <a class="nav-link"   aria-current="movimientos">Movimientos</a>
+          </li>
+        </ul>
+      </div>
+      <div class="d-flex ms-auto align-items-center">
+      <!-- If no user, show login -->
+      
+
+      <!-- If user exists, show initials circle -->
+      <div  class="dropdown">
+        <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+          <div class="avatar-circle bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-2" 
+               style="width:35px; height:35px; font-weight:bold;">
+            {{ 'DS' }}
+          </div>
+          {{ 'Darwin Segura' }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+    </div>
+
+  </nav>
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div>

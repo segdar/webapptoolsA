@@ -53,7 +53,7 @@ namespace webapptoolsA.Server.Controllers
             _context.Warehouses.Add(warehouse);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBodega), new { code = warehouse.code }, warehouse);
+            return CreatedAtAction(nameof(GetBodega), new { id = warehouse.code }, warehouse);
         }
 
         [HttpGet("{id}")]

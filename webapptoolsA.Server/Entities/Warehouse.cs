@@ -5,7 +5,7 @@ namespace webapptoolsA.Server.Entities
 {
     public class WarehouseBase
     {
-        public int Id { get; set; }                  // [id] INT IDENTITY
+        public int? Id { get; set; }                  // [id] INT IDENTITY
 
         public int? code { get; set; }
         public string Name { get; set; }             // [name] VARCHAR(100)
