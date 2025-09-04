@@ -31,3 +31,4 @@ yarn-error.log*
 /webapptoolsA.Server/obj
 /webapptoolsa.client/obj/Debug
 /.vs
+/webapptoolsA.Server/appsettings.json
