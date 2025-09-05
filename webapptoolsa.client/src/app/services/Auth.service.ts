@@ -24,4 +24,9 @@ export class AuthService {
   deleteToken() {
     this.cookieService.delete('authToken');
   }
+
+  isLoggedIn() {
+    const tmp = this.getToken();
+    return !!tmp;
+  }
 }
