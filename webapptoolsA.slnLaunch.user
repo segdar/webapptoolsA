@@ -4,11 +4,13 @@
     "Projects": [
       {
         "Path": "webapptoolsa.client\\webapptoolsa.client.esproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "localhost (Edge)"
       },
       {
         "Path": "webapptoolsA.Server\\webapptoolsA.Server.csproj",
-        "Action": "Start"
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "https"
       }
     ]
   }

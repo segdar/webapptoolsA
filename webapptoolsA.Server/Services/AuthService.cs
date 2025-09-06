@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,12 +14,14 @@ namespace webapptoolsA.Server.Services
 
     public interface  IAuthService
     {
-        Task<string?> Authentication(RequestUser user); 
+        Task<string?> Authentication(RequestUser user);
+        Task RegisterAsync(User model);
     }
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _config;
         private readonly AppDbContext _context;
+        private readonly PasswordHasher<User> _passwordHasher = new();
         public  AuthService(IConfiguration config, AppDbContext context)
         {
             _config = config;
@@ -28,18 +31,28 @@ namespace webapptoolsA.Server.Services
         public async Task<string?> Authentication(RequestUser user)
         {
             var tmpuser = await _context.UserModels.FirstOrDefaultAsync(i => i.Username == user.Username);
-
+           
             if (tmpuser == null)
                 return null;
 
+            var result = _passwordHasher.VerifyHashedPassword(tmpuser, tmpuser.Password, user.Password);
             // Compare password (in real life: hash check with BCrypt)
-            if (tmpuser.Password != user.Password)
+            if (PasswordVerificationResult.Success != result)
                 return null;
 
             // Generate token with claims (role, id, etc.)
             var token = GenerateJwtToken(tmpuser);
             tmpuser = null;
             return token;
+        }
+
+        public async Task RegisterAsync(User model)
+        {
+           
+            model.Password = _passwordHasher.HashPassword(model, model.Password);
+
+            _context.UserModels.Add(model);
+            await _context.SaveChangesAsync();
         }
 
         private string GenerateJwtToken(User user)

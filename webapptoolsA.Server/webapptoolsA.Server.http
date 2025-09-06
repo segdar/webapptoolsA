@@ -7,3 +7,7 @@ Accept: application/json
 
 GET {{webapptoolsA.Server_HostAddress}}/Company/
 Accept: aplication/json
+
+
+POST  {{webapptoolsA.Server_HostAddress}}/auth/
+Accept: aplication/json
