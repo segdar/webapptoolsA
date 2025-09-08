@@ -19,9 +19,9 @@ namespace webapptoolsA.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] RequestUser request)
+        public async Task<IActionResult> Login([FromBody] RequestUserLoginDto request)
         {
-            // Hardcoded user for demo
+            
             var token = await _authService.Authentication(request);
 
         if (token == null)

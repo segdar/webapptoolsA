@@ -1,11 +1,7 @@
-interface commonTools {
-  id: number | null;
-  name: string;
-  isActived: boolean;
-}
+import { commonModel } from "./Common";
 
-export type Category = commonTools;  
-export type ConditionalTools = commonTools;
+export type Category = commonModel;  
+export type ConditionalTools = commonModel;
 
 export interface Tools {
   id: number;

@@ -20,9 +20,9 @@ namespace webapptoolsA.Server.Entities
     {
         public Warehouse? WarehouseFather { get; set; }
         [JsonIgnore]
-        public ICollection<Warehouse> Children { get; set; } = new List<Warehouse>();
+        public virtual ICollection<Warehouse> Children { get; set; } = new List<Warehouse>();
 
-        public CompanyModel Company { get; set; }
+        public virtual CompanyModel Company { get; set; }
     }
 
 

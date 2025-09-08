@@ -33,21 +33,21 @@ namespace webapptoolsA.Server.Entities
     public class StatusTool : ToolCommonBase
     {
         [JsonIgnore]
-        public ICollection<Tools>? Tools { get; set; }
+        public virtual ICollection<Tools>? Tools { get; set; }
     }
 
     public class Category : ToolCommonBase
     {
         //public int MinStock { get; set; }
         [JsonIgnore]
-        public ICollection<Tools>? Tools { get; set; }
+        public virtual ICollection<Tools>? Tools { get; set; }
     }
 
     public class Tools : ToolsBase
     {
 
-        public Category? objcategory { get; set; }
-        public StatusTool? statustools { get; set; }
+        public virtual Category? objcategory { get; set; }
+        public virtual StatusTool? statustools { get; set; }
     }
 
     public class Stock

@@ -1,3 +1,4 @@
+import { UserCommonPermision } from "./Common";
 import { CompanyDto } from "./Company";
 
 export interface Warehouse {
@@ -14,4 +15,4 @@ export interface Warehouse {
   company: CompanyDto;              
 }
 
-
+export type WarehouseUserDto = UserCommonPermision 

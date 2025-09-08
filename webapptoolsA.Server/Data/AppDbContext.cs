@@ -18,6 +18,11 @@ namespace webapptoolsA.Server.Data
         public DbSet<StatusTool> StatusToolModels { get; set; }
         public DbSet<Stock> StockModels { get; set; }
         public DbSet<User> UserModels { get; set; }
+        public DbSet<TransactionHeader> TransactionHeaderModels { get; set; }
+        public DbSet<TransactionDetail> TransactionDetailsModels { get; set; }   
+        public DbSet<TypeTransaction> TypeTransactionModels { get; set; }
+        public DbSet<Project> ProjectModels { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Warehouse>(entity =>
@@ -54,7 +59,6 @@ namespace webapptoolsA.Server.Data
                 entity.Property(e => e.IsActived)
                     .IsRequired();
             });
-
 
             modelBuilder.Entity<StatusTool>(entity =>
             {
@@ -130,9 +134,156 @@ namespace webapptoolsA.Server.Data
                       .HasColumnName("password");
             });
 
+            modelBuilder.Entity<TransactionHeader>(entity =>
+            {
+                entity.ToTable("toolstransaction_header");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();
+                entity.Property(e => e.UserRecipt).HasColumnName("user_recipt").IsRequired();
+                entity.Property(e => e.Days).HasColumnName("days");
+                entity.Property(e => e.IdType).HasColumnName("type").IsRequired();
+                entity.Property(e => e.Notes).HasColumnName("notes").HasMaxLength(255);
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.IdProject).HasColumnName("idproject");
+                entity.Property(e => e.IdWarehouseOrigin).HasColumnName("idwarehouseorigin").IsRequired();
+                entity.Property(e => e.IdWarehouseDestination).HasColumnName("idwarehousedestination").IsRequired();
+                entity.Property(e => e.Status).HasColumnName("status").IsRequired();
+
+                entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.UserReciptNavigation)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserRecipt)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.WarehouseOrigin)
+                      .WithMany()
+                      .HasForeignKey(e => e.IdWarehouseOrigin)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.WarehouseDestination)
+                      .WithMany()
+                      .HasForeignKey(e => e.IdWarehouseDestination)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Type)
+                      .WithMany()
+                      .HasForeignKey(e => e.IdType)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Project)
+                      .WithMany()
+                      .HasForeignKey(e => e.IdProject)
+                      .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<TransactionDetail>(entity =>
+            {
+                entity.ToTable("toolstransaction_detail");
+
+                entity.HasKey(e => e.IdDetailTransaction);
+
+                entity.Property(e => e.IdDetailTransaction)
+                      .HasColumnName("iddetailtransaction");
+
+                entity.Property(e => e.IdTransaction)
+                      .HasColumnName("idtransaction")
+                      .IsRequired();
+
+                entity.Property(e => e.IdWarehouse)
+                      .HasColumnName("idwarehouse")
+                      .IsRequired();
+
+                entity.Property(e => e.Quantity)
+                      .HasColumnName("quantity")
+                      .IsRequired();
+
+                // Relationships
+                entity.HasOne(e => e.Transaction)
+                      .WithMany(h => h.Details)   
+                      .HasForeignKey(e => e.IdTransaction)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Warehouse)
+                      .WithMany() 
+                      .HasForeignKey(e => e.IdWarehouse)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Project>(entity =>
+            {
+                entity.ToTable("project");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id)
+                      .HasColumnName("id");
+
+                entity.Property(e => e.Name)
+                      .HasColumnName("name")
+                      .HasMaxLength(150)
+                      .IsRequired();
+
+                entity.Property(e => e.Description)
+                      .HasColumnName("description")
+                      .HasMaxLength(250);
+
+                entity.Property(e => e.Location)
+                      .HasColumnName("location")
+                      .HasMaxLength(250);
+
+                entity.Property(e => e.UserId)
+                      .HasColumnName("user_id")
+                      .IsRequired();
+
+                entity.Property(e => e.CreatedAt)
+                      .HasColumnName("created_at")
+                      .HasDefaultValueSql("getdate()");
+                     
+
+                // Relationship to User
+                entity.HasOne(e => e.User)
+                      .WithMany() // or .WithMany(u => u.Projects) if User has ICollection<Project>
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<TypeTransaction>(entity =>
+            {
+                entity.ToTable("typetransaction");
+                entity.ToTable(table =>
+                {
+                    table.HasCheckConstraint("CK_TypeTransaction_Type", "[type] IN ('I','E')");
+                });
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id)
+                      .HasColumnName("id");
+
+                entity.Property(e => e.Code)
+                      .HasColumnName("code")
+                      .HasMaxLength(50)
+                      .IsRequired();
+
+                entity.Property(e => e.Name)
+                      .HasColumnName("name")
+                      .HasMaxLength(255)
+                      .IsRequired();
+
+                entity.Property(e => e.Type)
+                      .HasColumnName("type")
+                      .HasMaxLength(1)
+                      .IsRequired();
 
 
+               
 
+            });
         }
     }
 }

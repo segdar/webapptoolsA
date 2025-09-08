@@ -14,7 +14,7 @@ namespace webapptoolsA.Server.Services
 
     public interface  IAuthService
     {
-        Task<string?> Authentication(RequestUser user);
+        Task<string?> Authentication(RequestUserLoginDto user);
         Task RegisterAsync(User model);
     }
     public class AuthService : IAuthService
@@ -28,9 +28,9 @@ namespace webapptoolsA.Server.Services
             _context = context; 
         }
 
-        public async Task<string?> Authentication(RequestUser user)
+        public async Task<string?> Authentication(RequestUserLoginDto user)
         {
-            var tmpuser = await _context.UserModels.FirstOrDefaultAsync(i => i.Username == user.Username);
+            var tmpuser = await _context.UserModels.AsNoTracking().FirstOrDefaultAsync(i => i.Username == user.Username);
            
             if (tmpuser == null)
                 return null;

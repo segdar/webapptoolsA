@@ -50,18 +50,18 @@ namespace webapptoolsA.Server.Services
 
         public async Task<List<Category>> GetAllCategory()
         {
-            return await _context.CategoryModels.
+            return await _context.CategoryModels.AsNoTracking().
                 ToListAsync();
         }
 
         public async Task<List<StatusTool>> GetAllStatusTool()
         {
-            return await _context.StatusToolModels.ToListAsync();
+            return await _context.StatusToolModels.AsNoTracking().ToListAsync();
         }
 
         public async Task<List<Tools>> GetAllTools()
         {
-            return await _context.ToolsModels
+            return await _context.ToolsModels.AsNoTracking()
                 .Include(i => i.statustools)
                 .Include(i => i.objcategory)
                 .ToListAsync();
@@ -79,7 +79,7 @@ namespace webapptoolsA.Server.Services
 
         public async Task<Tools?> GetToolsById(int id)
         {
-            return await _context.ToolsModels
+            return await _context.ToolsModels.AsNoTracking()
     .Include(t => t.statustools)
     .Include(t => t.objcategory)
     .FirstOrDefaultAsync(t => t.Id == id);

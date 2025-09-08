@@ -33,7 +33,7 @@ namespace webapptoolsA.Server.Services
         {
             try
             {
-             var data= await _context.CompanyModels.ToListAsync();
+             var data= await _context.CompanyModels.AsNoTracking().ToListAsync();
                 return data;
             }
             catch (Exception ex) { 
