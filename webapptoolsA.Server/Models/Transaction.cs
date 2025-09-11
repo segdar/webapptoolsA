@@ -10,4 +10,25 @@ namespace webapptoolsA.Server.Models
     {
 
     }
+
+    public class RequestProjectDto : ProjectBase
+    {
+
+    }
+
+    public class ResponseProjectDto : ProjectBase
+    {
+        public string Username { get; set; }
+    }
+
+
+    public class ResponseTypeTransactionDto : TypeTransaction
+    {
+
+    }
+
+    public class RequestTypeTransactionDto: TypeTransaction
+    {
+
+    }
 }

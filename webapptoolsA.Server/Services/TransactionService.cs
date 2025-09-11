@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Humanizer;
+using Microsoft.EntityFrameworkCore;
 using webapptoolsA.Server.Data;
 using webapptoolsA.Server.Entities;
+using webapptoolsA.Server.Models;
 
 namespace webapptoolsA.Server.Services
 {
@@ -12,15 +14,15 @@ namespace webapptoolsA.Server.Services
         Task<TransactionHeader?> UpdateAsync(TransactionHeader transaction);
         Task<bool> DeleteAsync(int id);
 
-        Task<Project> CreateAsyncProject(Project project);
-        Task<Project?> GetByIdAsyncProject(int id);
-        Task<List<Project>> GetAllAsyncProject();
-        Task<Project?> UpdateAsyncProject( Project updatedProject);
+        Task<ResponseProjectDto> CreateAsyncProject(RequestProjectDto project);
+        Task<ResponseProjectDto?> GetByIdAsyncProject(int id);
+        Task<List<ResponseProjectDto>> GetAllAsyncProject();
+        Task<ResponseProjectDto?> UpdateAsyncProject(RequestProjectDto updatedProject);
 
-        Task<TypeTransaction> CreateAsyncType(TypeTransaction typeTransaction);
-        Task<TypeTransaction?> GetByIdAsyncType(int id);
-        Task<List<TypeTransaction>> GetAllAsyncType();
-        Task<TypeTransaction?> UpdateAsyncType(TypeTransaction updatedTypeTransaction);
+        Task<ResponseTypeTransactionDto> CreateAsyncType(RequestTypeTransactionDto typeTransaction);
+        Task<ResponseTypeTransactionDto?> GetByIdAsyncType(int id);
+        Task<List<ResponseTypeTransactionDto>> GetAllAsyncType();
+        Task<ResponseTypeTransactionDto?> UpdateAsyncType(RequestTypeTransactionDto updatedTypeTransaction);
 
     }
     public class TransactionService :ITransactionService
@@ -85,66 +87,162 @@ namespace webapptoolsA.Server.Services
             return true;
         }
 
-        public async Task<Project> CreateAsyncProject(Project project)
+        public async Task<ResponseProjectDto> CreateAsyncProject(RequestProjectDto project)
         {
-            
-            _context.ProjectModels.Add(project);
+
+            var entity = new Project
+            {
+                Name = project.Name,
+                Description = project.Description,
+                Location = project.Location,
+                UserId = project.UserId
+            };
+
+            _context.ProjectModels.Add(entity);
             await _context.SaveChangesAsync();
-            return project;
+
+            var username = await _context.UserModels
+                .Where(u => u.Id == entity.UserId)
+                .Select(u => u.Username)
+                .FirstOrDefaultAsync();
+
+            // Map entity → response DTO
+            return new ResponseProjectDto
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                Description = entity.Description,
+                Location = entity.Location,
+                UserId = entity.UserId,
+                CreatedAt = entity.CreatedAt,
+                Username = username ?? ""
+            };
         }
 
-        public async Task<Project?> GetByIdAsyncProject(int id)
+        public async Task<ResponseProjectDto?> GetByIdAsyncProject(int id)
         {
             return await _context.ProjectModels
+            .Where(p => p.Id == id)
+            .Select(p => new ResponseProjectDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Location = p.Location,
+                CreatedAt = p.CreatedAt,
+                UserId = p.UserId,
+                Username = p.User.Username
+            })
             .AsNoTracking()
-            .Include(p => p.User) // eager load User
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .FirstOrDefaultAsync();
         }
 
-        public async Task<List<Project>> GetAllAsyncProject()
+        public async Task<List<ResponseProjectDto>> GetAllAsyncProject()
         {
             return await _context.ProjectModels
+            .Select(p => new ResponseProjectDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Location = p.Location,
+                CreatedAt = p.CreatedAt,
+                UserId = p.UserId,
+                Username = p.User.Username
+            })
             .AsNoTracking()
-             .Include(p => p.User)
              .ToListAsync();
         }
 
-        public async Task<Project?> UpdateAsyncProject( Project updatedProject)
+        public async Task<ResponseProjectDto?> UpdateAsyncProject(RequestProjectDto updatedProject)
         {
-            var existing = await _context.ProjectModels.FindAsync(updatedProject.Id);
+            var existing = await _context.ProjectModels.Include(p => p.User) 
+                                        .FirstOrDefaultAsync(p => p.Id == updatedProject.Id);
             if (existing == null) return null;
 
             _context.Entry(existing).CurrentValues.SetValues(updatedProject);
             await _context.SaveChangesAsync();
-            return existing;
+
+            return new ResponseProjectDto
+            {
+                Id = existing.Id,
+                Name = existing.Name,
+                Description = existing.Description,
+                Location = existing.Location,
+                UserId = existing.UserId,
+                CreatedAt = existing.CreatedAt,
+                Username = existing.User.Username
+            };
 
         }
 
-        public async Task<TypeTransaction> CreateAsyncType(TypeTransaction typeTransaction)
+        public async Task<ResponseTypeTransactionDto> CreateAsyncType(RequestTypeTransactionDto typeTransaction)
         {
-            _context.TypeTransactionModels.Add(typeTransaction);
+            var entity = new TypeTransaction
+            {
+                Code = typeTransaction.Code,
+                Name = typeTransaction.Name,
+                Type = typeTransaction.Type
+            };
+
+            _context.TypeTransactionModels.Add(entity);
             await _context.SaveChangesAsync();
-            return typeTransaction;
+
+            var response = new ResponseTypeTransactionDto
+            {
+                Id = entity.Id,
+                Code = entity.Code,
+                Name = entity.Name,
+                Type = entity.Type
+            };
+
+            return response;
         }
 
-        public async Task<TypeTransaction?> GetByIdAsyncType(int id)
+        public async Task<ResponseTypeTransactionDto?> GetByIdAsyncType(int id)
         {
-            return await _context.TypeTransactionModels.FindAsync(id);
+            return await _context.TypeTransactionModels
+                 .Where(p => p.Id == id)
+                 .Select(p => new ResponseTypeTransactionDto
+                 {
+                     Id = p.Id,
+                     Code = p.Code,
+                     Name = p.Name,
+                     Type = p.Type
+
+                 }).AsNoTracking()
+            .FirstOrDefaultAsync();
         }
 
-        public async Task<List<TypeTransaction>> GetAllAsyncType()
+        public async Task<List<ResponseTypeTransactionDto>> GetAllAsyncType()
         {
-            return await _context.TypeTransactionModels.AsNoTracking().ToListAsync();
+            return await _context.TypeTransactionModels
+                .Select(p => new ResponseTypeTransactionDto
+                {
+                    Id = p.Id,  
+                    Code = p.Code,
+                    Name = p.Name,
+                    Type = p.Type                         
+                })
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public async Task<TypeTransaction?> UpdateAsyncType(TypeTransaction updatedTypeTransaction)
+        public async Task<ResponseTypeTransactionDto?> UpdateAsyncType(RequestTypeTransactionDto updatedTypeTransaction)
         {
             var existing = await _context.TypeTransactionModels.FindAsync(updatedTypeTransaction.Id);
             if (existing == null) return null;
 
             _context.Entry(existing).CurrentValues.SetValues(updatedTypeTransaction);
             await _context.SaveChangesAsync();
-            return existing;
+            return new ResponseTypeTransactionDto
+            {
+                Id = existing.Id,
+                Code = existing.Code,
+                Name = existing.Name,
+                Type = existing.Type
+
+            };
         }
     }
 }

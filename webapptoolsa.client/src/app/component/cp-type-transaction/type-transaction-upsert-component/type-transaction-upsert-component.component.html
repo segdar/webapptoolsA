@@ -1,0 +1,30 @@
+
+<mat-dialog-content>
+<div class="container form-row">
+    <mat-form-field appearance="fill">
+        <mat-label>Codigo</mat-label>
+        <input matInput [(ngModel)]="objTypeTransaction.code" >
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput [(ngModel)]=" objTypeTransaction.name">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Seleccionar Tipo</mat-label>
+        <select matNativeControl [(ngModel)]="objTypeTransaction.type">
+            <option ngValue="null">Ninguno</option>
+            <option ngValue="I">Ingreso</option>
+            <option ngValue="E">Salida</option>
+        </select>
+    </mat-form-field>
+    <mat-label>Activo</mat-label>
+    <mat-checkbox [(ngModel)]="objTypeTransaction.isActived">
+    </mat-checkbox>
+   
+</div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+<button mat-button mat-dialog-close>Cancel</button>
+<button mat-button   (click)="saveTypes()" >Guardar</button>
+</mat-dialog-actions>
+

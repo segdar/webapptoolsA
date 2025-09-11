@@ -1,5 +1,4 @@
 import { Routes } from "@angular/router";
-import { CompanyComponent } from "./component/company/company.component";
 import { LoginComponent } from "./component/login/login.component";
 import { NavbarComponent } from "./component/navbar/navbar.component";
 import { authGuard } from "./services/Auth.guard";
@@ -14,10 +13,11 @@ export const routes: Routes = [
     component: NavbarComponent, // layout wrapper with <router-outlet>
     children: [
       { path: 'company', loadComponent: () => import('./component/company/company.component').then(m => m.CompanyComponent) },
-      { path: 'warehouse', loadComponent: () => import('./component/warehouse/warehouse.component').then(m => m.WarehouseComponent) },
+      { path: 'warehouse', loadComponent: () => import('./component/cp-warehouse/warehouse/warehouse.component').then(m => m.WarehouseComponent) },
       { path: 'category', loadComponent: () => import('./component/category/category.component').then(m => m.CategoryComponent) },
       { path: 'conditional', loadComponent: () => import('./component/conditionaltools/conditionaltools.component').then(m => m.ConditionaltoolsComponent) },
       { path: 'tools', loadComponent: () => import('./component/tools/tools.component').then(m => m.ToolsComponent) },
+      { path: 'typetransaction', loadComponent: () => import('./component/cp-type-transaction/type-transaction/type-transaction.component').then(m => m.TypeTransactionComponent)},
       {
         path: '',
         redirectTo: 'company',

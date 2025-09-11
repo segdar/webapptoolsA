@@ -6,9 +6,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Warehouse } from '../../models/Warehouse';
+import { Warehouse } from '../../../models/Warehouse';
 import { Subject, takeUntil } from 'rxjs';
-import { WarehouseService } from '../../services/Warehouse.service';
+import { WarehouseService } from '../../../services/Warehouse.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using webapptoolsA.Server.Entities;
+using webapptoolsA.Server.Models;
 using webapptoolsA.Server.Services;
 
 namespace webapptoolsA.Server.Controllers
@@ -74,14 +75,16 @@ namespace webapptoolsA.Server.Controllers
         }
 
         [HttpPost("projects")]
-        public async Task<IActionResult> CreateProject([FromBody] Project project)
+        public async Task<IActionResult> CreateProject([FromBody] RequestProjectDto project)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var created = await _transactionService.CreateAsyncProject(project);
             return CreatedAtAction(nameof(GetProjectById), new { id = created.Id }, created);
         }
 
         [HttpPut("projects/{id}")]
-        public async Task<IActionResult> UpdateProject(int id, [FromBody] Project project)
+        public async Task<IActionResult> UpdateProject(int id, [FromBody] RequestProjectDto project)
         {
             if (id != project.Id) return BadRequest("ID mismatch");
 
@@ -108,14 +111,14 @@ namespace webapptoolsA.Server.Controllers
         }
 
         [HttpPost("types")]
-        public async Task<IActionResult> CreateTypeTransaction([FromBody] TypeTransaction typeTransaction)
+        public async Task<IActionResult> CreateTypeTransaction([FromBody] RequestTypeTransactionDto typeTransaction)
         {
             var created = await _transactionService.CreateAsyncType(typeTransaction);
             return CreatedAtAction(nameof(GetTypeTransactionById), new { id = created.Id }, created);
         }
 
         [HttpPut("types/{id}")]
-        public async Task<IActionResult> UpdateTypeTransaction(int id, [FromBody] TypeTransaction typeTransaction)
+        public async Task<IActionResult> UpdateTypeTransaction(int id, [FromBody] RequestTypeTransactionDto typeTransaction)
         {
             if (id != typeTransaction.Id) return BadRequest("ID mismatch");
 

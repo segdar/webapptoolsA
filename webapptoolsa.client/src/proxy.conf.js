@@ -9,7 +9,8 @@ const PROXY_CONFIG = [
       "/company",
       "/warehouse",
       "/tools",
-      "/auth"
+      "/auth",
+      "/transaction"
     ],
     target,
     changeOrigin: true,
