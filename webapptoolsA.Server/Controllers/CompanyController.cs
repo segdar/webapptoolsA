@@ -57,6 +57,16 @@ namespace webapptoolsA.Server.Controllers
            
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCompany(int id, [FromBody] CompanyModel model)
+        {
+            if (id != model.Id) return BadRequest("ID mismatch");
+
+            var updated = await _companyService.updateCompany(model);
+            if (updated == null) return NotFound();
+
+            return Ok(updated);
+        }
 
 
         [HttpGet("{id}")]

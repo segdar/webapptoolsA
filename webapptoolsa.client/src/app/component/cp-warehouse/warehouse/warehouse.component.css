@@ -1,11 +1,20 @@
-.form-row {
-  display: display;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px; /* space between fields */
+mat-form-field {
+    width: 100%;
 }
 
+mat-drawer-container {
+    background: #fff;
+}
 
-.form-row mat-form-field {
-   width: 100%;   /* each field takes equal width */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #343a40;
 }

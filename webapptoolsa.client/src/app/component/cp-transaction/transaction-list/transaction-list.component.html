@@ -1,0 +1,87 @@
+<div class="container">
+  <div class="mb-3 header">
+    <h1>Movimientos</h1>
+    <button mat-raised-button color="primary" class="me-3" (click)="new()"><mat-icon>add</mat-icon>Agregar</button>
+  </div>
+
+  <mat-form-field>
+    <mat-label>Filtro</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Buscar..." #input>
+  </mat-form-field>
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="data" matSort>
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+        <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nameTypeTransaction">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Operación </th>
+        <td mat-cell *matCellDef="let row"> {{row.nameTypeTransaction}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nameProject">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Projecto</th>
+        <td mat-cell *matCellDef="let row"> {{row.nameProject}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="days">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Cant. Dias</th>
+        <td mat-cell *matCellDef="let row"> {{row.days}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="usernameRegister">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
+        <td mat-cell *matCellDef="let row"> {{row.usernameRegister}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="warehouseOrigin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Origen</th>
+        <td mat-cell *matCellDef="let row"> {{row.warehouseOrigin}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="warehouseDestination">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Destino</th>
+        <td mat-cell *matCellDef="let row"> {{row.warehouseDestination}} </td>
+      </ng-container>
+      <ng-container matColumnDef="usernameRecipt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Recibido</th>
+        <td mat-cell *matCellDef="let row"> {{row.usernameRecipt}} </td>
+      </ng-container>
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha creado</th>
+        <td mat-cell *matCellDef="let row"> {{row.createdAt}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
+        <td mat-cell *matCellDef="let row"> {{ row.isActived ? 'Activo' : 'Inactivo' }} </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Acciones </th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-mini-fab (click)="edit(row)" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-mini-fab color="warn" (click)="remove(row.id)" aria-label="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="dataNameColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: dataNameColumns;"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No se encontro información"{{input.value}}"</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10,20,30 ]" aria-label="Select page of users"></mat-paginator>
+  </div>
+</div>

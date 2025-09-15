@@ -1,0 +1,63 @@
+<mat-dialog-content>
+    <div class="container form-row">
+        <mat-form-field appearance="fill">
+            <mat-label>Nombre</mat-label>
+            <input matInput [(ngModel)]="obj.name">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Descripción</mat-label>
+            <input matInput [(ngModel)]=" obj.description">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Ubicación</mat-label>
+            <input matInput [(ngModel)]=" obj.location">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Proveedor</mat-label>
+            <input matInput [(ngModel)]=" obj.provider">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Codigo de Barra</mat-label>
+            <input matInput [(ngModel)]=" obj.barcode">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>QR</mat-label>
+            <input matInput [(ngModel)]=" obj.qr">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Costo</mat-label>
+            <input matInput [(ngModel)]=" obj.cost">
+        </mat-form-field>
+        <mat-form-field  appearance="fill">
+            <mat-label>Category</mat-label>
+            <mat-select [(ngModel)]="obj.category" (selectionChange)="onSelect($event)" >
+                
+                <mat-option >
+                    <input  matInput placeholder="Search..."  (click)="$event.stopPropagation()"  [(ngModel)]="searchCategory"
+                        (ngModelChange)="filterCategories($event)" autocomplete="off"  />
+                </mat-option>
+
+                <mat-option *ngFor="let b of lstTmpCategory()" [value]="b.id">
+                    {{ b.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Seleccionar Estado</mat-label>
+            <select matNativeControl [(ngModel)]="obj.status_tool">
+                <option [ngValue]="null">Ninguno</option>
+                <option *ngFor="let b of lstdataConditional()" [ngValue]="b.id">{{ b.name}}</option>
+            </select>
+        </mat-form-field>
+
+        <mat-label>Activo</mat-label>
+        <mat-checkbox [(ngModel)]="obj.isActived">
+        </mat-checkbox> <br>
+
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button [disabled]="!isValid(obj)" (click)="save()">Guardar</button>
+</mat-dialog-actions>

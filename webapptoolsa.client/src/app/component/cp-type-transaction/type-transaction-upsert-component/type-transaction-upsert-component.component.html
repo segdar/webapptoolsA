@@ -25,6 +25,6 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
 <button mat-button mat-dialog-close>Cancel</button>
-<button mat-button   (click)="saveTypes()" >Guardar</button>
+<button mat-button [disabled]="!isValid(objTypeTransaction)"  (click)="saveTypes()" >Guardar</button>
 </mat-dialog-actions>
 

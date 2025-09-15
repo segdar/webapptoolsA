@@ -8,6 +8,6 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\webapptoolsa.client\browser\</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\app\shared\" />
+    <Folder Include="src\app\component\cp-transaction\" />
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@
       },
       {
         "Path": "webapptoolsA.Server\\webapptoolsA.Server.csproj",
-        "Action": "StartWithoutDebugging",
+        "Action": "Start",
         "DebugTarget": "https"
       }
     ]

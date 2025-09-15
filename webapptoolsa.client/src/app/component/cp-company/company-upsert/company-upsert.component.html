@@ -1,0 +1,25 @@
+  <mat-dialog-content>
+     <div class="container form-row">
+     <mat-form-field appearance="fill">
+    <mat-label>Nombre de la Empresa</mat-label>
+    <input matInput [(ngModel)]="obj.name">
+  </mat-form-field>
+   <mat-form-field appearance="fill">
+    <mat-label>Dirección</mat-label>
+    <input matInput [(ngModel)]="obj.address">
+  </mat-form-field>
+   <mat-form-field appearance="fill">
+     <mat-label>Contacto</mat-label>
+    <input matInput [(ngModel)]="obj.contactInfo">
+  </mat-form-field>
+  </div>
+
+  </mat-dialog-content>
+ 
+<mat-dialog-actions align="end">
+<button mat-button mat-dialog-close>Cancel</button>
+<button mat-button [disabled]="!isValid(obj)"  (click)="save()" >Guardar</button>
+</mat-dialog-actions>
+
+
+

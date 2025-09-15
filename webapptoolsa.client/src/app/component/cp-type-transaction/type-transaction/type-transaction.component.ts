@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,19 +6,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Subject, take, takeUntil } from 'rxjs';
+import { filter, Subject, take, takeUntil } from 'rxjs';
 import { TypeTransaction } from '../../../models/Transaction';
 import { TransactionService } from '../../../services/Transaction.service';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import { TypeTransactionUpsertComponentComponent } from '../type-transaction-upsert-component/type-transaction-upsert-component.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-type-transaction',
@@ -27,12 +20,12 @@ import { TypeTransactionUpsertComponentComponent } from '../type-transaction-ups
   templateUrl: './type-transaction.component.html',
   styleUrl: './type-transaction.component.css'
 })
-export class TypeTransactionComponent implements OnDestroy,AfterViewInit {
+export class TypeTransactionComponent implements AfterViewInit {
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  private _destroySubcription = new Subject<void>();
+  private destroyRef = inject(DestroyRef);
   private _typeTransactionService = inject(TransactionService)
   private readonly _dialog =inject(  MatDialog);
 
@@ -42,7 +35,7 @@ export class TypeTransactionComponent implements OnDestroy,AfterViewInit {
  
 
   ngAfterViewInit(): void {
-   this._typeTransactionService.getTypeTransactionAll().subscribe({
+    this._typeTransactionService.getTypeTransactionAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
     next:(data) => {
        this.data = new MatTableDataSource(data);
        this.data.paginator = this.paginator;
@@ -63,32 +56,48 @@ export class TypeTransactionComponent implements OnDestroy,AfterViewInit {
   }
 
   new() {
-    this._dialog.open(TypeTransactionUpsertComponentComponent);
-    this._dialog.afterAllClosed.pipe(takeUntil(this._destroySubcription)).subscribe({
+    const tmpdialog =  this._dialog.open(TypeTransactionUpsertComponentComponent);
+    tmpdialog.afterClosed().pipe(filter(data => data != null &&
+      typeof data.name === "string" &&
+      data.name.trim() !== ""),takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
-            console.log("data",data)
+          this.data.data = [...this.data.data, data];
       },
       error: (error) => console.log(error)
     })
   }
 
   edit(obj: Partial<TypeTransaction>) {
-    this._dialog.open(TypeTransactionUpsertComponentComponent,{
-      data: obj
+   const tmpdialog = this._dialog.open(TypeTransactionUpsertComponentComponent,{
+      data: {...obj}
     })
-    this._dialog.afterAllClosed.pipe(takeUntil(this._destroySubcription)).subscribe({
+    tmpdialog.afterClosed().pipe(filter(data => data != null &&
+      typeof data.name === "string" &&
+      data.name.trim() !== ""),takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
-            console.log("data",data)
+        const index = this.data.data.findIndex(x => x.id === data.id);
+        if (index >= 0) {
+          this.data.data[index] = data;
+          this.data.data = [...this.data.data]; 
+        }
+         
       },
       error: (error) => console.log(error)
     })
   }
 
-  
+  remove(id: number) {
 
-  ngOnDestroy(): void {
-    this._destroySubcription.next();
-    this._destroySubcription.complete();
+    this._typeTransactionService.removeTypeTransaction(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        
+        this.data.data = this.data.data.filter(item => item.id !== id);
+      },
+      error: (error) => console.log(error)
+    })
+
   }
+
+  
 
 }

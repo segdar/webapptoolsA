@@ -1,0 +1,20 @@
+mat-form-field {
+  width: 100%;
+}
+
+mat-drawer-container {
+  background: #fff;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #343a40;
+}

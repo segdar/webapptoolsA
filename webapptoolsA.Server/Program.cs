@@ -6,6 +6,8 @@ using webapptoolsA.Server.Data;
 using webapptoolsA.Server.Services;
 
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -32,7 +34,8 @@ builder.Services.AddAuthentication(options =>
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); // Ensure Microsoft.EntityFrameworkCore.SqlServer package is installed
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
+    )); // Ensure Microsoft.EntityFrameworkCore.SqlServer package is installed
 
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IToolService, ToolService>();
@@ -48,7 +51,12 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    _ = db.Model;                // build EF metadata early
+    db.Database.CanConnect();    // check DB connection
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

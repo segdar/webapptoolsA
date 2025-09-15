@@ -15,3 +15,29 @@ export interface Project {
   createdAt: Date | null;
   username: string | null;
 }
+
+
+export interface TransactionHeaderBase {
+  id: number | null;
+  userId: number;
+  days: number | null;
+  idType: number;
+  notes: string | null;
+  userRecipt: number;
+  idProject: number | null;
+  idWarehouseOrigin: number;
+  idWarehouseDestination: number;
+  createdAt: Date | null;  
+  status: number;
+}
+
+export interface TransactionHeaderDto extends TransactionHeaderBase {
+  usernameRegister: string;
+  usernameRecipt: string;
+  warehouseOrigin: string;
+  warehouseDestination: string;
+  nameTypeTransaction: string;
+  nameProject: string;
+}
+
+

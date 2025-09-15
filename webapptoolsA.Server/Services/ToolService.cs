@@ -16,6 +16,9 @@ namespace webapptoolsA.Server.Services
         Task<Category> CreateCategory(Category category);
         Task<StatusTool> CreateStatusTool(StatusTool statusTool);
         Task<Tools> CreateTools(Tools tools);
+        Task<Category?> UpdateCategory(Category model);
+        Task<StatusTool?> UpdateStatus(StatusTool model);
+        Task<Tools?> UpdateTools(Tools model);
 
     }
     public class ToolService : IToolService
@@ -83,6 +86,51 @@ namespace webapptoolsA.Server.Services
     .Include(t => t.statustools)
     .Include(t => t.objcategory)
     .FirstOrDefaultAsync(t => t.Id == id);
+        }
+
+        public async Task<Category?> UpdateCategory(Category model)
+        {
+              _context.CategoryModels.Attach(model);
+            _context.Entry(model).State = EntityState.Modified;
+
+            var affected = await _context.SaveChangesAsync();
+
+            if (affected == 0)
+            {
+                return null; 
+            }
+
+            return model;
+        }
+
+        public async Task<StatusTool?> UpdateStatus(StatusTool model)
+        {
+               _context.StatusToolModels.Attach(model);
+            _context.Entry(model).State = EntityState.Modified;
+
+            var affected = await _context.SaveChangesAsync();
+
+            if (affected == 0)
+            {
+                return null; 
+            }
+
+            return model;
+        }
+
+        public async Task<Tools?> UpdateTools(Tools model)
+        {
+               _context.ToolsModels.Attach(model);
+            _context.Entry(model).State = EntityState.Modified;
+
+            var affected = await _context.SaveChangesAsync();
+
+            if (affected == 0)
+            {
+                return null; 
+            }
+
+            return model;
         }
     }
 }

@@ -16,19 +16,23 @@ namespace webapptoolsA.Server.Entities
         public int? WarehouseFatherId { get; set; }  // [warehousefatherid] INT NULL
     }
 
-    public class Warehouse :WarehouseBase
+    public class Warehouse : WarehouseBase
     {
         public Warehouse? WarehouseFather { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<Warehouse> Children { get; set; } = new List<Warehouse>();
-
         public virtual CompanyModel Company { get; set; }
     }
 
 
 
-    public class RequestWarehouseCreateDto :WarehouseBase
+    public class RequestWarehouseDto : WarehouseBase
     {
-            
+
     }
+
+    public class ResponseWarehouseDto : WarehouseBase
+    {
+
+        public string NameWarehouseFather { get; set; }
+    }
+
 }

@@ -1,4 +1,4 @@
-import { Component, inject, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, Inject, } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -8,8 +8,9 @@ import { MatInputModule } from '@angular/material/input';
 import { TypeTransaction } from '../../../models/Transaction';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { TransactionService } from '../../../services/Transaction.service';
-import { Subject, takeUntil } from 'rxjs';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+
 
 @Component({
   selector: 'app-type-transaction-upsert-component',
@@ -18,12 +19,12 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   templateUrl: './type-transaction-upsert-component.component.html',
   styleUrl: './type-transaction-upsert-component.component.css'
 })
-export class TypeTransactionUpsertComponentComponent implements OnDestroy {
+export class TypeTransactionUpsertComponentComponent  {
   objTypeTransaction: Partial<TypeTransaction> = {}
   isnew = true;
   private _typeTransactionService = inject(TransactionService)
-  private _destroySubcription = new Subject<void>();
-  private _snackBar = inject(MatSnackBar);
+  private _destroyRef = inject(DestroyRef);
+
    constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,  
     private dialogRef: MatDialogRef<TypeTransactionUpsertComponentComponent>
@@ -37,32 +38,29 @@ export class TypeTransactionUpsertComponentComponent implements OnDestroy {
   }
 
   
-  
+  isValid(obj: Partial<TypeTransaction>): boolean {
+    return !!obj.code && !!obj.name && !!obj.type;
+  }
 
   saveTypes() {
     if(!this.isnew) {
-      this._typeTransactionService.updateTypeTransaction(this.objTypeTransaction as TypeTransaction).pipe(takeUntil(this._destroySubcription)).subscribe({
+      this._typeTransactionService.updateTypeTransaction(this.objTypeTransaction as TypeTransaction).pipe(takeUntilDestroyed(this._destroyRef)).subscribe({
         next:(data) => {
-          console.log(data)
+          this.dialogRef.close(data);
         },
         error: (error) => console.log(error)
       })
     }else {
-      this._typeTransactionService.createTypeTransaction(this.objTypeTransaction as TypeTransaction).pipe(takeUntil(this._destroySubcription)).subscribe({
+      this._typeTransactionService.createTypeTransaction(this.objTypeTransaction as TypeTransaction).pipe(takeUntilDestroyed(this._destroyRef)).subscribe({
         next: (data) => {
-          console.log("data",data);
+          this.dialogRef.close(data);
         },
-         error: (error) =>{
-           this._snackBar.open("Error: " + error, "Close", { duration: 1000 });
-         }
+         error: (error) => console.log(error)
       })
     }
     
   }
 
-    ngOnDestroy(): void {
-    this._destroySubcription.next();
-    this._destroySubcription.complete();
-  }
+   
   
 }

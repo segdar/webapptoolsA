@@ -128,6 +128,17 @@ namespace webapptoolsA.Server.Controllers
             return Ok(updated);
         }
 
+        [HttpDelete("type/{id}")]
+        public async Task<IActionResult> DeleteTypeTransaction(int id)
+        {
+            var deleted = await _transactionService.DeleteAsyncType(id);
+            if (!deleted) return NotFound();
+            return NoContent();
+        }
+
+
+
+
 
     }
 }

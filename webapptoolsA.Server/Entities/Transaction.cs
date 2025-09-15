@@ -2,7 +2,8 @@
 
 namespace webapptoolsA.Server.Entities
 {
-    public class TransactionHeader
+
+    public class TransactionHeaderBase
     {
         public int? Id { get; set; }
         public int UserId { get; set; }
@@ -16,6 +17,10 @@ namespace webapptoolsA.Server.Entities
         public DateTime? CreatedAt { get; set; }
         public int Status { get; set; }
 
+    }
+    public class TransactionHeader : TransactionHeaderBase
+    {
+       
         public virtual User? User { get; set; }
 
         public virtual User? UserReciptNavigation { get; set; }
@@ -49,6 +54,7 @@ namespace webapptoolsA.Server.Entities
         public string Code { get; set; }
         public string Name { get; set; }
         public string Type { get; set; } 
+        public bool IsActived { get; set; }
     }
 
     public class ProjectBase

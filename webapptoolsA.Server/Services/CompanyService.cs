@@ -4,12 +4,14 @@ using webapptoolsA.Server.Entities;
 
 namespace webapptoolsA.Server.Services
 {
-   
+
     public interface ICompanyService
     {
-        Task<List<CompanyModel>>  GetAllCompany();
+        Task<List<CompanyModel>> GetAllCompany();
         Task<CompanyModel?> GetCompanyById(int id);
         Task<CompanyModel> CreateCompany(CompanyModel company);
+
+        Task<CompanyModel?> updateCompany(CompanyModel company);
 
     }
 
@@ -41,11 +43,31 @@ namespace webapptoolsA.Server.Services
                 return new List<CompanyModel>();
             }
         }
+        
 
         public async Task<CompanyModel?> GetCompanyById(int id)
         {
             return await _context.CompanyModels.FindAsync(id);
-         
+
         }
+
+        public async Task<CompanyModel?> updateCompany(CompanyModel company)
+        {
+            _context.CompanyModels.Attach(company);
+            _context.Entry(company).State = EntityState.Modified;
+
+            var affected = await _context.SaveChangesAsync();
+
+            if (affected == 0)
+            {
+                return null; 
+            }
+
+            return company;
+
+
+
+        }
+
     }
 }

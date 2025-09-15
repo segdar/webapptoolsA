@@ -17,7 +17,7 @@ namespace webapptoolsA.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Warehouse>> CreateBodega(RequestWarehouseCreateDto dto)
+        public async Task<ActionResult<Warehouse>> CreateBodega(RequestWarehouseDto dto)
         {
             int newId;
 
@@ -67,12 +67,48 @@ namespace webapptoolsA.Server.Controllers
             return warehouse;
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateWarehouse(int id ,[FromBody] RequestWarehouseDto model)
+        {
+            if (id != model.Id) return BadRequest("ID mismatch");
+            var warehouse = new Warehouse
+            {
+                code = model.code,
+                Name =model.Name,
+                Description = model.Description,
+                Location    = model.Location,
+                WarehouseFatherId = model.WarehouseFatherId,
+                CompanyId = model.CompanyId,
+                IsActived = model.IsActived,
+                Id = model.Id
+            };
+            _context.Warehouses.Attach(warehouse);
+            _context.Entry(warehouse).State = EntityState.Modified;
+            var effected = await _context.SaveChangesAsync();
+            if (effected == 0) return NotFound();
+            return Ok(effected);
+        }
+
         [HttpGet]
-        public async Task<ActionResult<List<Warehouse>>> GetAll()
+        public async Task<ActionResult<List<ResponseWarehouseDto>>> GetAll()
         {
             return await _context.Warehouses
-                .Include(b => b.WarehouseFather)
-                .ToListAsync();
+                 .Include(w => w.WarehouseFather) // Include only the direct parent
+        .Select(w => new ResponseWarehouseDto
+        {
+            Id = w.Id,
+            code = w.code,
+            Name = w.Name,
+            Description = w.Description,
+            Location = w.Location,
+            IsActived = w.IsActived,
+            CompanyId = w.CompanyId,
+            WarehouseFatherId = w.WarehouseFatherId,
+            NameWarehouseFather = w.WarehouseFather!.Name
+        })
+         .AsNoTracking()
+        .ToListAsync();
+
         }
     }
 }

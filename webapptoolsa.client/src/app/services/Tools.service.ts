@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Category, ConditionalTools, Tools } from "../models/Tools";
-import { Observable, shareReplay } from "rxjs";
+import { Category, ConditionalTools, Tools, ToolsDto } from "../models/Tools";
+import { catchError, Observable, shareReplay, throwError } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -10,35 +10,162 @@ export class ToolsServices {
 
     private categories$: Observable<Category[]>;
     private status$: Observable<ConditionalTools[]>;
-    private tools$ :Observable<Tools[]>;  
+    private tools$: Observable<Tools[]>;
 
     constructor(private http: HttpClient) {
-        this.categories$ = this.http.get<Category[]>('/tools/category').pipe(shareReplay({ bufferSize: 1,windowTime:5 * 60 * 1000,  refCount: true }));
-        this.status$ = this.http.get<ConditionalTools[]>('/tools/status').pipe(shareReplay({ bufferSize: 1,windowTime:5 * 60 * 1000,  refCount: true }));
-        this.tools$ = this.http.get<Tools[]>('/tools').pipe(shareReplay({ bufferSize: 1, windowTime: 5 * 60 * 1000, refCount: true })); 
-      }
+        this.categories$ = this.http.get<Category[]>('/tools/category').pipe( catchError((error: any) => {
+        let message = "Unexpected error occurred";
 
-    getCategory():Observable<Category[]> {
+        if (error.error?.message) {
+          message = error.error.message;
+        }
+
+        else if (error.error?.errors) {
+          message = Object.values(error.error.errors).join(', ');
+        }
+
+        return throwError(() => message);
+      }),shareReplay({ bufferSize: 1, windowTime: 5 * 60 * 1000, refCount: true }));
+        this.status$ = this.http.get<ConditionalTools[]>('/tools/status').pipe( catchError((error: any) => {
+        let message = "Unexpected error occurred";
+
+        if (error.error?.message) {
+          message = error.error.message;
+        }
+
+        else if (error.error?.errors) {
+          message = Object.values(error.error.errors).join(', ');
+        }
+
+        return throwError(() => message);
+      }),shareReplay({ bufferSize: 1, windowTime: 5 * 60 * 1000, refCount: true }));
+        this.tools$ = this.http.get<Tools[]>('/tools').pipe( catchError((error: any) => {
+        let message = "Unexpected error occurred";
+
+        if (error.error?.message) {
+          message = error.error.message;
+        }
+
+        else if (error.error?.errors) {
+          message = Object.values(error.error.errors).join(', ');
+        }
+
+        return throwError(() => message);
+      }),shareReplay({ bufferSize: 1, windowTime: 5 * 60 * 1000, refCount: true }));
+    }
+
+    getCategory(): Observable<Category[]> {
         return this.categories$;
     }
 
-    getStatus():Observable<ConditionalTools[]> {
+    getStatus(): Observable<ConditionalTools[]> {
         return this.status$;
     }
 
-    getTools():Observable<Tools[]> {
+    getTools(): Observable<Tools[]> {
         return this.tools$;
     }
 
-    
-    createCategory(info:Partial<Category>) {
-              return this.http.post('/tools/category',info);
-    }
-     createConditional(info:Partial<ConditionalTools>) {
-              return this.http.post('/tools/status',info);
+
+    createCategory(info: Partial<Category>) {
+        return this.http.post<Category>('/tools/category', info).pipe(
+              catchError((error: any) => {
+                let message = "Unexpected error occurred";
+        
+                if (error.error?.message) {
+                  message = error.error.message;
+                }
+        
+                else if (error.error?.errors) {
+                  message = Object.values(error.error.errors).join(', ');
+                }
+        
+                return throwError(() => message);
+              }));
     }
 
-    createTools(info:Partial<Tools>) {
-              return this.http.post('/tools',info);
+    updateCategory(info: Partial<Category>) {
+        return this.http.put<Category>(`/tools/category/${info.id}`, info).pipe(
+      catchError((error: any) => {
+        let message = "Unexpected error occurred";
+
+        if (error.error?.message) {
+          message = error.error.message;
+        }
+
+        else if (error.error?.errors) {
+          message = Object.values(error.error.errors).join(', ');
+        }
+
+        return throwError(() => message);
+      }));
+    }
+
+    createConditional(info: Partial<ConditionalTools>) {
+        return this.http.post<ConditionalTools>('/tools/status', info).pipe(
+      catchError((error: any) => {
+        let message = "Unexpected error occurred";
+
+        if (error.error?.message) {
+          message = error.error.message;
+        }
+
+        else if (error.error?.errors) {
+          message = Object.values(error.error.errors).join(', ');
+        }
+
+        return throwError(() => message);
+      }));;
+    }
+
+    updateConditional(info: Partial<ConditionalTools>) {
+        return this.http.put<ConditionalTools>(`/tools/status/${info.id}`,info).pipe(
+      catchError((error: any) => {
+        let message = "Unexpected error occurred";
+
+        if (error.error?.message) {
+          message = error.error.message;
+        }
+
+        else if (error.error?.errors) {
+          message = Object.values(error.error.errors).join(', ');
+        }
+
+        return throwError(() => message);
+      }));;
+    }
+
+    createTools(info: Partial<ToolsDto>) {
+        return this.http.post<Tools>('/tools', info).pipe(
+      catchError((error: any) => {
+        let message = "Unexpected error occurred";
+
+        if (error.error?.message) {
+          message = error.error.message;
+        }
+
+        else if (error.error?.errors) {
+          message = Object.values(error.error.errors).join(', ');
+        }
+
+        return throwError(() => message);
+      }));;
+    }
+
+    updateTools(info:Partial<ToolsDto>) {
+        return this.http.put<Tools>(`/tools/${info.id}`,info).pipe(
+      catchError((error: any) => {
+        let message = "Unexpected error occurred";
+
+        if (error.error?.message) {
+          message = error.error.message;
+        }
+
+        else if (error.error?.errors) {
+          message = Object.values(error.error.errors).join(', ');
+        }
+
+        return throwError(() => message);
+      }));
     }
 }

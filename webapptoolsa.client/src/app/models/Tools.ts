@@ -17,5 +17,5 @@ export interface Tools {
   statustools: ConditionalTools;
 }
 
-export type ToolsDto = Omit<Tools,'objcategory'|'statustools'> & { category: number,
+export type ToolsDto = Omit<Tools,'objcategory'|'statustools'> & { category: number ,
   status_tool: number}

@@ -8,10 +8,10 @@ namespace webapptoolsA.Server.Services
 {
     public interface ITransactionService
     {
-        Task<List<TransactionHeader>> GetAllAsync();
-        Task<TransactionHeader?> GetByIdAsync(int id);
-        Task<TransactionHeader> CreateAsync(TransactionHeader transaction);
-        Task<TransactionHeader?> UpdateAsync(TransactionHeader transaction);
+        Task<List<ResponseTransactionHeader>> GetAllAsync();
+        Task<ResponseTransactionHeader?> GetByIdAsync(int id);
+        Task<ResponseTransactionHeader> CreateAsync(TransactionHeader transaction);
+        Task<ResponseTransactionHeader?> UpdateAsync(TransactionHeader transaction);
         Task<bool> DeleteAsync(int id);
 
         Task<ResponseProjectDto> CreateAsyncProject(RequestProjectDto project);
@@ -23,7 +23,7 @@ namespace webapptoolsA.Server.Services
         Task<ResponseTypeTransactionDto?> GetByIdAsyncType(int id);
         Task<List<ResponseTypeTransactionDto>> GetAllAsyncType();
         Task<ResponseTypeTransactionDto?> UpdateAsyncType(RequestTypeTransactionDto updatedTypeTransaction);
-
+        Task<bool> DeleteAsyncType(int id);
     }
     public class TransactionService :ITransactionService
     {
@@ -34,47 +34,122 @@ namespace webapptoolsA.Server.Services
             _context = context;
         }
 
-        public async Task<List<TransactionHeader>> GetAllAsync()
+        public async Task<List<ResponseTransactionHeader>> GetAllAsync()
         {
-            return await _context.TransactionHeaderModels.AsNoTracking()
-                .Include(t => t.User)
-                .Include(t => t.UserReciptNavigation)
-                .Include(t => t.Project)
-                .Include(t => t.WarehouseOrigin)
-                .Include(t => t.WarehouseDestination)
-                .Include(t => t.Type)
-                .Include(t => t.Details)
+            return await _context.TransactionHeaderModels
+                .Select(t => new ResponseTransactionHeader
+                {
+                    Id = t.Id,
+                    UserId = t.UserId,
+                    UsernameRegister = t.User!.Username,
+                    Days = t.Days,
+                    IdType = t.IdType,
+                    nameTypeTransaction = t.Type!.Name,
+                    Notes = t.Notes,
+                    UserRecipt = t.UserRecipt,
+                    UsernameRecipt = t.UserReciptNavigation!.Username,
+                    IdProject = t.IdProject,
+                    NameProject = t.Project!.Name,
+                    IdWarehouseOrigin = t.IdWarehouseOrigin,
+                    WarehouseOrigin = t.WarehouseOrigin!.Name,
+                    IdWarehouseDestination = t.IdWarehouseDestination,
+                    WarehouseDestination = t.WarehouseDestination!.Name,
+                    CreatedAt = t.CreatedAt,
+                    Status = t.Status
+                })
+                .AsNoTracking()
                 .ToListAsync();
         }
 
-        public async Task<TransactionHeader?> GetByIdAsync(int id)
+        public async Task<ResponseTransactionHeader?> GetByIdAsync(int id)
         {
-            return await _context.TransactionHeaderModels.AsNoTracking()
-                .Include(t => t.User)
-                .Include(t => t.UserReciptNavigation)
-                .Include(t => t.Project)
-                .Include(t => t.WarehouseOrigin)
-                .Include(t => t.WarehouseDestination)
-                .Include(t => t.Type)
-                .Include(t => t.Details)
-                .FirstOrDefaultAsync(t => t.Id == id);
+            return await _context.TransactionHeaderModels
+                 .Where(t => t.Id == id)
+                 .Select(t => new ResponseTransactionHeader
+                 {
+                     Id = t.Id,
+                     UserId = t.UserId,
+                     UsernameRegister = t.User!.Username,
+                     Days = t.Days,
+                     IdType = t.IdType,
+                     nameTypeTransaction = t.Type!.Name,
+                     Notes = t.Notes,
+                     UserRecipt = t.UserRecipt,
+                     UsernameRecipt = t.UserReciptNavigation!.Username,
+                     IdProject = t.IdProject,
+                     NameProject = t.Project!.Name,
+                     IdWarehouseOrigin = t.IdWarehouseOrigin,
+                     WarehouseOrigin = t.WarehouseOrigin!.Name,
+                     IdWarehouseDestination = t.IdWarehouseDestination,
+                     WarehouseDestination = t.WarehouseDestination!.Name,
+                     CreatedAt = t.CreatedAt,
+                     Status = t.Status
+                 })
+                .AsNoTracking()                
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<TransactionHeader> CreateAsync(TransactionHeader transaction)
+        public async Task<ResponseTransactionHeader> CreateAsync(TransactionHeader transaction)
         {
             _context.TransactionHeaderModels.Add(transaction);
             await _context.SaveChangesAsync();
-            return transaction;
+            var transactionTmp = await _context.TransactionHeaderModels
+                .Where(t => t.Id == transaction.Id)
+                .Select(t => new ResponseTransactionHeader
+                {
+                    Id = t.Id,
+                    UserId = t.UserId,
+                    UsernameRegister = t.User!.Username,
+                    Days = t.Days,
+                    IdType = t.IdType,
+                    nameTypeTransaction = t.Type!.Name,
+                    Notes = t.Notes,
+                    UserRecipt = t.UserRecipt,
+                    UsernameRecipt = t.UserReciptNavigation!.Username,
+                    IdProject = t.IdProject,
+                    NameProject = t.Project!.Name,
+                    IdWarehouseOrigin = t.IdWarehouseOrigin,
+                    WarehouseOrigin = t.WarehouseOrigin!.Name,
+                    IdWarehouseDestination = t.IdWarehouseDestination,
+                    WarehouseDestination = t.WarehouseDestination!.Name,
+                    CreatedAt = t.CreatedAt,
+                    Status = t.Status
+                }).FirstOrDefaultAsync();
+
+            return transactionTmp!;
         }
 
-        public async Task<TransactionHeader?> UpdateAsync(TransactionHeader transaction)
+        public async Task<ResponseTransactionHeader?> UpdateAsync(TransactionHeader transaction)
         {
-            var existing = await _context.TransactionHeaderModels.FindAsync(transaction.Id);
-            if (existing == null) return null;
+            _context.TransactionHeaderModels.Attach(transaction);
+            _context.Entry(transaction).State = EntityState.Modified;
 
-            _context.Entry(existing).CurrentValues.SetValues(transaction);
-            await _context.SaveChangesAsync();
-            return existing;
+           var effect =  await _context.SaveChangesAsync();
+            if (effect == 0) return null;
+
+            return  await _context.TransactionHeaderModels
+                .Where(t => t.Id == transaction.Id)
+                .Select(t => new ResponseTransactionHeader
+                {
+                    Id = t.Id,
+                    UserId = t.UserId,
+                    UsernameRegister = t.User!.Username,
+                    Days = t.Days,
+                    IdType = t.IdType,
+                    nameTypeTransaction = t.Type!.Name,
+                    Notes = t.Notes,
+                    UserRecipt = t.UserRecipt,
+                    UsernameRecipt = t.UserReciptNavigation!.Username,
+                    IdProject = t.IdProject,
+                    NameProject = t.Project!.Name,
+                    IdWarehouseOrigin = t.IdWarehouseOrigin,
+                    WarehouseOrigin = t.WarehouseOrigin!.Name,
+                    IdWarehouseDestination = t.IdWarehouseDestination,
+                    WarehouseDestination = t.WarehouseDestination!.Name,
+                    CreatedAt = t.CreatedAt,
+                    Status = t.Status
+                }).FirstOrDefaultAsync();
+           
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -182,7 +257,8 @@ namespace webapptoolsA.Server.Services
             {
                 Code = typeTransaction.Code,
                 Name = typeTransaction.Name,
-                Type = typeTransaction.Type
+                Type = typeTransaction.Type,
+                IsActived = typeTransaction.IsActived
             };
 
             _context.TypeTransactionModels.Add(entity);
@@ -193,7 +269,9 @@ namespace webapptoolsA.Server.Services
                 Id = entity.Id,
                 Code = entity.Code,
                 Name = entity.Name,
-                Type = entity.Type
+                Type = entity.Type,
+                IsActived = entity.IsActived
+                
             };
 
             return response;
@@ -208,7 +286,9 @@ namespace webapptoolsA.Server.Services
                      Id = p.Id,
                      Code = p.Code,
                      Name = p.Name,
-                     Type = p.Type
+                     Type = p.Type,
+                     IsActived = p.IsActived
+                     
 
                  }).AsNoTracking()
             .FirstOrDefaultAsync();
@@ -222,7 +302,8 @@ namespace webapptoolsA.Server.Services
                     Id = p.Id,  
                     Code = p.Code,
                     Name = p.Name,
-                    Type = p.Type                         
+                    Type = p.Type,
+                    IsActived = p.IsActived
                 })
                 .AsNoTracking()
                 .ToListAsync();
@@ -240,9 +321,20 @@ namespace webapptoolsA.Server.Services
                 Id = existing.Id,
                 Code = existing.Code,
                 Name = existing.Name,
-                Type = existing.Type
+                Type = existing.Type,
+                IsActived = existing.IsActived
 
             };
+        }
+
+        public async Task<bool> DeleteAsyncType(int id)
+        {
+            var entity = await _context.TypeTransactionModels.FindAsync(id);
+            if (entity == null) return false;
+
+            _context.TypeTransactionModels.Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

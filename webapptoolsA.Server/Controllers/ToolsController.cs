@@ -21,8 +21,8 @@ namespace webapptoolsA.Server.Controllers
         [HttpGet("category")]
         public async Task<ActionResult<List<Category>>> GetAll()
         {
-           return  await _toolService.GetAllCategory();
-           
+            return await _toolService.GetAllCategory();
+
         }
 
         [HttpPost("category")]
@@ -64,6 +64,18 @@ namespace webapptoolsA.Server.Controllers
 
             return category;
         }
+
+        [HttpPut("category/{id}")]
+        public async Task<ActionResult> UpdateCategory(int id, [FromBody] Category model)
+        {
+            if (id != model.Id) return BadRequest("ID mismatch");
+
+            var updated = await _toolService.UpdateCategory(model);
+            if (updated == null) return NotFound();
+
+            return Ok(updated);
+        }
+
 
         [HttpGet("status")]
         public async Task<ActionResult<List<StatusTool>>> GetAllStatus()
@@ -109,6 +121,18 @@ namespace webapptoolsA.Server.Controllers
             if (statustool == null) return NotFound();
 
             return statustool;
+        }
+
+
+        [HttpPut("status/{id}")]
+        public async Task<ActionResult> UpdateStatus(int id, [FromBody] StatusTool model)
+        {
+            if (id != model.Id) return BadRequest("ID mismatch");
+
+            var updated = await _toolService.UpdateStatus(model);
+            if (updated == null) return NotFound();
+
+            return Ok(updated);
         }
 
         [HttpGet]
@@ -157,6 +181,18 @@ namespace webapptoolsA.Server.Controllers
             if (tool == null) return NotFound();
 
             return tool;
+        }
+        
+         
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateTools(int id, [FromBody] Tools model)
+        {
+             if (id != model.Id) return BadRequest("ID mismatch");
+
+            var updated = await _toolService.UpdateTools(model);
+            if (updated == null) return NotFound();
+
+            return Ok(updated);
         }
 
 

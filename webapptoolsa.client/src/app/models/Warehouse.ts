@@ -11,8 +11,8 @@ export interface Warehouse {
   companyId: number;         
   warehouseFatherId: number | null;
   warehouseFather?: Warehouse;   
-  children: Warehouse[];        
-  company: CompanyDto;              
+  nameWarehouseFather: string | null;
+            
 }
 
 export type WarehouseUserDto = UserCommonPermision 
