@@ -17,7 +17,8 @@ export const routes: Routes = [
       { path: 'category', loadComponent: () => import('./component/cp-category/category/category.component').then(m => m.CategoryComponent) },
       { path: 'conditional', loadComponent: () => import('./component/cp-conditionalTools/conditionaltools/conditionaltools.component').then(m => m.ConditionaltoolsComponent) },
       { path: 'tools', loadComponent: () => import('./component/cp-tools/tools/tools.component').then(m => m.ToolsComponent) },
-      { path: 'typetransaction', loadComponent: () => import('./component/cp-type-transaction/type-transaction/type-transaction.component').then(m => m.TypeTransactionComponent)},
+      { path: 'typetransaction', loadComponent: () => import('./component/cp-type-transaction/type-transaction/type-transaction.component').then(m => m.TypeTransactionComponent) },
+      { path: 'transaction', loadComponent: () => import('./component/cp-transaction/transaction-upsert/transaction-upsert.component').then(m => m.TransactionUpsertComponent)},
       {
         path: '',
         redirectTo: 'company',

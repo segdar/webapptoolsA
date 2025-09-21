@@ -20,6 +20,8 @@ export interface Project {
 export interface TransactionHeaderBase {
   id: number | null;
   userId: number;
+  dateStart: Date | null;
+  dateEnd: Date | null;
   days: number | null;
   idType: number;
   notes: string | null;

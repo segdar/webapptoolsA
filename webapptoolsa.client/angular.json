@@ -76,6 +76,11 @@
             },
             "development": {
               "buildTarget": "webapptoolsa.client:build:development"
+            },
+            "docker": {
+              "buildTarget": "webapptoolsa.client:build:development",
+              "proxyConfig": "src/proxy.docker.conf.js",
+              "port": 4200
             }
           },
           "defaultConfiguration": "development",
@@ -110,5 +115,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "69d43ade-6df3-4dc7-a6e9-a81f51765daa"
   }
 }

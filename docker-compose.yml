@@ -1,0 +1,6 @@
+services:
+  webapptoolsa.server:
+    image: ${DOCKER_REGISTRY-}webapptoolsaserver
+    build:
+      context: .
+      dockerfile: webapptoolsA.Server/Dockerfile

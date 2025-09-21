@@ -7,7 +7,7 @@
   "type": "edge",
   "request": "launch",
   "url": "https://localhost:53152",
-  "webRoot": "D:\\Darwin\\Projects\\segdar\\PRJ-Tools\\webapptoolsA\\webapptoolsa.client"
+  "webRoot": "C:\\Users\\Darwin\\Documents\\Projects\\segdar\\PRJ-Tools\\webapptoolsA\\webapptoolsa.client"
 }</LaunchJsonTarget>
   </PropertyGroup>
 </Project>
