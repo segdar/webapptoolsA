@@ -22,8 +22,12 @@ namespace webapptoolsA.Server.Data
             public DbSet<TransactionDetail> TransactionDetailsModels { get; set; }
             public DbSet<TypeTransaction> TypeTransactionModels { get; set; }
             public DbSet<Project> ProjectModels { get; set; }
+            public DbSet<Roles> RoleModels { get; set; }
+            public DbSet<UserAccessCompany> UserAccessCompaniesModels { get; set; }
 
-            protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
                   modelBuilder.Entity<Warehouse>(entity =>
                   {
@@ -110,8 +114,21 @@ namespace webapptoolsA.Server.Data
                         entity.Property(e => e.StockQuantity);
 
                   });
+                    
+                  modelBuilder.Entity<Roles>(entity =>
+                  {
+                        entity.ToTable("roles");
+                        entity.HasKey(e => e.Id);
+                        entity.Property(e => e.Name)
+                        .HasMaxLength(50)
+                        .IsRequired()
+                        .HasColumnName("name");
+                        entity.Property(e => e.IsActived)
+                        .HasColumnName("isactived")
+                        .IsRequired();
+                  });
 
-                  modelBuilder.Entity<User>(entity =>
+                   modelBuilder.Entity<User>(entity =>
                   {
                         entity.ToTable("users");
                         entity.HasKey(e => e.Id);
@@ -119,9 +136,9 @@ namespace webapptoolsA.Server.Data
                         .HasMaxLength(100)
                         .IsRequired()
                         .HasColumnName("username");
-                        entity.Property(e => e.Role)
-                        .HasMaxLength(50)
-                        .HasColumnName("role");
+                         entity.HasOne(e => e.Roles)
+                        .WithMany()
+                        .HasForeignKey(u => u.Role);
                         entity.Property(e => e.IsActived)
                         .HasColumnName("isactived");
                         entity.Property(e => e.Barcode)
@@ -286,6 +303,27 @@ namespace webapptoolsA.Server.Data
 
 
                   });
-            }
+                  modelBuilder.Entity<UserAccessCompany>(entity =>
+                  {
+                        entity.ToTable("usercompany");
+                        entity.HasKey(e => e.Id); 
+                        entity.Property(e => e.IdUser)
+                        .HasColumnName("user_id")
+                        .IsRequired();
+                        entity.Property(e => e.IdCompany)
+                        .HasColumnName("company_id")
+                        .IsRequired();
+                        // Relationships
+                        entity.HasOne<User>()
+                        .WithMany()
+                        .HasForeignKey(e => e.IdUser)
+                        .OnDelete(DeleteBehavior.Cascade);
+                        entity.HasOne<CompanyModel>()
+                        .WithMany()
+                        .HasForeignKey(e => e.IdCompany)
+                        .OnDelete(DeleteBehavior.Cascade);
+                  });
+
+        }
       }
 }

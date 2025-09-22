@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using webapptoolsA.Server.Data;
 using webapptoolsA.Server.Entities;
+using webapptoolsA.Server.Models;
 
 namespace webapptoolsA.Server.Services
 {
@@ -10,6 +12,7 @@ namespace webapptoolsA.Server.Services
         Task<List<CompanyModel>> GetAllCompany();
         Task<CompanyModel?> GetCompanyById(int id);
         Task<CompanyModel> CreateCompany(CompanyModel company);
+        Task<List<ResponseCompanyDto>> GetCompaniesByIds(int iduser);
 
         Task<CompanyModel?> updateCompany(CompanyModel company);
 
@@ -43,7 +46,45 @@ namespace webapptoolsA.Server.Services
                 return new List<CompanyModel>();
             }
         }
-        
+
+        public async Task<List<ResponseCompanyDto>> GetCompaniesByIds(int iduser)
+        {
+
+            var tmpIds = await _context.UserAccessCompaniesModels
+       .AsNoTracking()
+       .Where(uc => uc.IdUser == iduser)
+       .Select(uc => uc.IdCompany)
+       .ToListAsync();
+
+            if (!tmpIds.Any())
+                return new List<ResponseCompanyDto>();
+
+            // Fetch companies with their warehouses in a single query
+            var data = await _context.CompanyModels
+                .AsNoTracking()
+                .Where(c => tmpIds.Contains(c.Id ?? -1))
+                .Select(c => new ResponseCompanyDto
+                {
+                    Id = c.Id ?? -1,
+                    Name = c.Name,
+                    Warehouses = c.Warehouses
+                        .Where(w => w.IsActived)
+                        .Select(w => new WarehouseBase
+                        {
+                            Id = w.Id,
+                            Name = w.Name,
+                            code = w.code,
+                            Description = w.Description,
+                            Location = w.Location,
+
+                           
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
+            return data;
+        }
 
         public async Task<CompanyModel?> GetCompanyById(int id)
         {

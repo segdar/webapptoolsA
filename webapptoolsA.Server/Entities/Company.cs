@@ -17,6 +17,6 @@ namespace webapptoolsA.Server.Entities
         public string ContactInfo { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Warehouse> Warehouses { get; set; } = new List<Warehouse>();
+        public virtual ICollection<Warehouse> Warehouses { get; set; }
     }
 }

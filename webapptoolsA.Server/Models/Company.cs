@@ -1,6 +1,12 @@
-﻿namespace webapptoolsA.Server.Models
+﻿using webapptoolsA.Server.Entities;
+
+namespace webapptoolsA.Server.Models
 {
-    public class Company
+    public class ResponseCompanyDto
     {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public IEnumerable<WarehouseBase> Warehouses { get; set; } = new List<WarehouseBase>();
+
     }
 }

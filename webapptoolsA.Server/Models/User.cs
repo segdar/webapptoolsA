@@ -18,4 +18,10 @@ namespace webapptoolsA.Server.Models
         public string Namerole { get; set; }
         public string Username {  get; set; }
     }
+
+    public class ResponseAuthethication
+    {
+        public string Token { get; set; }
+        public ResponseInfoUser Info { get; set; }
+    }
 }

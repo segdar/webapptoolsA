@@ -14,7 +14,7 @@ namespace webapptoolsA.Server.Services
 
     public interface  IAuthService
     {
-        Task<string?> Authentication(RequestUserLoginDto user);
+        Task<ResponseAuthethication?> Authentication(RequestUserLoginDto user);
         Task RegisterAsync(User model);
     }
     public class AuthService : IAuthService
@@ -28,9 +28,9 @@ namespace webapptoolsA.Server.Services
             _context = context; 
         }
 
-        public async Task<string?> Authentication(RequestUserLoginDto user)
+        public async Task<ResponseAuthethication?> Authentication(RequestUserLoginDto user)
         {
-            var tmpuser = await _context.UserModels.AsNoTracking().FirstOrDefaultAsync(i => i.Username == user.Username);
+            var tmpuser = await _context.UserModels.AsNoTracking().Include(u => u.Roles).FirstOrDefaultAsync(i => i.Username == user.Username);
            
             if (tmpuser == null)
                 return null;
@@ -41,9 +41,16 @@ namespace webapptoolsA.Server.Services
                 return null;
 
             // Generate token with claims (role, id, etc.)
-            var token = GenerateJwtToken(tmpuser);
-            tmpuser = null;
-            return token;
+            var tmpResponse = new ResponseInfoUser
+            {
+                Id = tmpuser.Id ?? -1,
+                Idrole = tmpuser.Role,
+                Namerole = tmpuser.Roles!.Name,
+                Username = tmpuser.Username
+            };
+            var token = GenerateJwtToken(tmpResponse);
+
+            return new ResponseAuthethication { Token=token, Info= tmpResponse};
         }
 
         public async Task RegisterAsync(User model)
@@ -55,14 +62,16 @@ namespace webapptoolsA.Server.Services
             await _context.SaveChangesAsync();
         }
 
-        private string GenerateJwtToken(User user)
+        private string GenerateJwtToken(ResponseInfoUser user)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
 
             var claims = new[]
             {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, user.Role.ToString()) // Example role
+            new Claim("RoleId", user.Idrole.ToString()),
+            new Claim(ClaimTypes.Role, user.Namerole) 
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));

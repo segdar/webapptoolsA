@@ -12,10 +12,12 @@ namespace webapptoolsA.Server.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ICompanyService _companyService;
 
-        public AuthController(IAuthService authService) 
+        public AuthController(IAuthService authService, ICompanyService companyService) 
         {
             _authService = authService;
+            _companyService = companyService;
         }
 
         [HttpPost]
@@ -26,8 +28,12 @@ namespace webapptoolsA.Server.Controllers
 
         if (token == null)
             return Unauthorized("Invalid credentials");
+            
+        
+        var access = await _companyService.GetCompaniesByIds(token.Info.Id);
 
-        return Ok(new { Token = token });
+
+        return Ok(new {  token.Token , access});
         }
 
         [HttpPost("register")]
