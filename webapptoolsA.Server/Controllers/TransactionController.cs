@@ -33,7 +33,7 @@ namespace webapptoolsA.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTransaction([FromBody] TransactionHeader transaction)
+        public async Task<IActionResult> CreateTransaction([FromBody] TransactionHeaderBase transaction)
         {
             var created = await _transactionService.CreateAsync(transaction);
             return CreatedAtAction(nameof(GetTransactionById), new { id = created.Id }, created);
@@ -134,6 +134,13 @@ namespace webapptoolsA.Server.Controllers
             var deleted = await _transactionService.DeleteAsyncType(id);
             if (!deleted) return NotFound();
             return NoContent();
+        }
+
+        [HttpPost("detail")]
+        public async Task<IActionResult> CreateTransactionDetail([FromBody] RequestTransactionDetailDto Detail)
+        {
+            var created = await _transactionService.CreateAsyncDetail(Detail);
+            return CreatedAtAction(nameof(GetTransactionById), new { id = created.IdDetailTransaction }, created);
         }
 
 

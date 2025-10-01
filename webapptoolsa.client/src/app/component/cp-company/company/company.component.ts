@@ -11,11 +11,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { CompanyUpsertComponent } from '../company-upsert/company-upsert.component';
 import { BaseCrudTableComponent } from '../../abstract/BaseCrudTableComponent';
 import { MatInputModule } from '@angular/material/input';
+import { PermissionService } from '../../../services/PermissionService';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-company',
   standalone: true,
-  imports: [ MatFormFieldModule,MatTableModule, MatInputModule, MatSortModule, MatPaginatorModule,MatIconModule,MatButtonModule],
+  imports: [CommonModule, MatFormFieldModule,MatTableModule, MatInputModule, MatSortModule, MatPaginatorModule,MatIconModule,MatButtonModule],
   templateUrl: './company.component.html',
   styleUrl: './company.component.css',
   
@@ -23,6 +25,7 @@ import { MatInputModule } from '@angular/material/input';
 export class CompanyComponent extends BaseCrudTableComponent<CompanyDto>  {
 
   private _companyService = inject(CompanyService)
+  permissionService = inject(PermissionService);
 
   displayedColumns: string[] = ["id", "name", "address", "contactInfo", "action"];
   

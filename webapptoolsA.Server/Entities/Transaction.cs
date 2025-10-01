@@ -10,10 +10,10 @@ namespace webapptoolsA.Server.Entities
         public int? Days { get; set; }
         public int IdType { get; set; }
         public string? Notes { get; set; }
-        public int UserRecipt { get; set; }
+        public int? UserRecipt { get; set; }
         public int? IdProject { get; set; }
         public int IdWarehouseOrigin { get; set; }
-        public int IdWarehouseDestination { get; set; }
+        public int? IdWarehouseDestination { get; set; }
         public DateTime? CreatedAt { get; set; }
         public int Status { get; set; }
 
@@ -36,16 +36,24 @@ namespace webapptoolsA.Server.Entities
         public virtual ICollection<TransactionDetail>? Details { get; set; }
     }
 
-    public class TransactionDetail
+    public class TransactionDetailBase
     {
-        public int IdDetailTransaction { get; set; }
+        public int? IdDetailTransaction { get; set; }
         public int IdTransaction { get; set; }
         public int IdWarehouse { get; set; }
+        public int IdToolsType { get; set; }
+        public int IdStatusTools { get; set; }
         public int Quantity { get; set; }
 
-        public virtual TransactionHeader? Transaction { get; set; }
-        public virtual Warehouse? Warehouse { get; set; }
 
+    }
+    public class TransactionDetail :TransactionDetailBase
+    {
+        
+
+        public virtual Warehouse? Warehouse { get; set; }
+        public virtual Tools? ToolsType { get; set; }
+        public virtual TransactionHeader? TransactionHeader { get; set; }
     }
 
     public class TypeTransaction
@@ -55,6 +63,8 @@ namespace webapptoolsA.Server.Entities
         public string Name { get; set; }
         public string Type { get; set; } 
         public bool IsActived { get; set; }
+        public bool RequiredWarehouse { get; set; }
+        public int? IdPairType { get; set; }
     }
 
     public class ProjectBase

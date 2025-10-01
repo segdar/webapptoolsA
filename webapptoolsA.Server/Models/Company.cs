@@ -6,7 +6,7 @@ namespace webapptoolsA.Server.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<WarehouseBase> Warehouses { get; set; } = new List<WarehouseBase>();
+        public List<WarehouseBase> Warehouses { get; set; } = new List<WarehouseBase>();
 
     }
 }

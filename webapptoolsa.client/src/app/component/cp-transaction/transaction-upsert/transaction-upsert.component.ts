@@ -70,4 +70,31 @@ export class TransactionUpsertComponent  implements OnInit{
       c.name.toLowerCase().includes(filterValue)
     ));
   }
+
+  headerNew() {
+    console.log("new header");
+  }
+
+  headerApply() {
+    console.log("apply header")
+  }
+
+  headerAbort() {
+    console.log("abort header");
+  }
+
+  detailNew() {
+    console.log("new detail");
+
+  }
+
+  detailEdit() {
+        console.log("edit detail");
+  }
+
+  detailRemove() {
+            console.log("remove detail");
+  }
+
+
 }

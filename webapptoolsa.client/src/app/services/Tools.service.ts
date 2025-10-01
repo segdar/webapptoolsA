@@ -13,7 +13,7 @@ export class ToolsServices {
     private tools$: Observable<Tools[]>;
 
     constructor(private http: HttpClient) {
-        this.categories$ = this.http.get<Category[]>('/tools/category').pipe( catchError((error: any) => {
+        this.categories$ = this.http.get<Category[]>(`${environment.apiUrl}/tools/category`).pipe( catchError((error: any) => {
         let message = "Unexpected error occurred";
 
         if (error.error?.message) {
@@ -26,7 +26,7 @@ export class ToolsServices {
 
         return throwError(() => message);
       }),shareReplay({ bufferSize: 1, windowTime: 5 * 60 * 1000, refCount: true }));
-        this.status$ = this.http.get<ConditionalTools[]>('/tools/status').pipe( catchError((error: any) => {
+        this.status$ = this.http.get<ConditionalTools[]>(`${environment.apiUrl}/tools/status`).pipe( catchError((error: any) => {
         let message = "Unexpected error occurred";
 
         if (error.error?.message) {
@@ -39,7 +39,7 @@ export class ToolsServices {
 
         return throwError(() => message);
       }),shareReplay({ bufferSize: 1, windowTime: 5 * 60 * 1000, refCount: true }));
-        this.tools$ = this.http.get<Tools[]>('/tools').pipe( catchError((error: any) => {
+        this.tools$ = this.http.get<Tools[]>(`${environment.apiUrl}/tools`).pipe( catchError((error: any) => {
         let message = "Unexpected error occurred";
 
         if (error.error?.message) {
@@ -68,7 +68,7 @@ export class ToolsServices {
 
 
     createCategory(info: Partial<Category>) {
-        return this.http.post<Category>('/tools/category', info).pipe(
+        return this.http.post<Category>(`${environment.apiUrl}/tools/category`, info).pipe(
               catchError((error: any) => {
                 let message = "Unexpected error occurred";
         
@@ -85,7 +85,7 @@ export class ToolsServices {
     }
 
     updateCategory(info: Partial<Category>) {
-        return this.http.put<Category>(`/tools/category/${info.id}`, info).pipe(
+        return this.http.put<Category>(`${environment.apiUrl}/tools/category/${info.id}`, info).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 
@@ -102,7 +102,7 @@ export class ToolsServices {
     }
 
     createConditional(info: Partial<ConditionalTools>) {
-        return this.http.post<ConditionalTools>('/tools/status', info).pipe(
+        return this.http.post<ConditionalTools>(`${environment.apiUrl}/tools/status`, info).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 
@@ -119,7 +119,7 @@ export class ToolsServices {
     }
 
     updateConditional(info: Partial<ConditionalTools>) {
-        return this.http.put<ConditionalTools>(`/tools/status/${info.id}`,info).pipe(
+        return this.http.put<ConditionalTools>(`${environment.apiUrl}/tools/status/${info.id}`,info).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 
@@ -136,7 +136,7 @@ export class ToolsServices {
     }
 
     createTools(info: Partial<ToolsDto>) {
-        return this.http.post<Tools>('/tools', info).pipe(
+        return this.http.post<Tools>(`${environment.apiUrl}/tools`, info).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 
@@ -153,7 +153,7 @@ export class ToolsServices {
     }
 
     updateTools(info:Partial<ToolsDto>) {
-        return this.http.put<Tools>(`/tools/${info.id}`,info).pipe(
+        return this.http.put<Tools>(`${environment.apiUrl}/tools/${info.id}`,info).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 

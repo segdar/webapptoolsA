@@ -12,7 +12,7 @@ export class TransactionService {
   private typeTransaction$: Observable<TypeTransaction[]>
 
   constructor(private http: HttpClient) {
-    this.typeTransaction$ = this.http.get<TypeTransaction[]>('/transaction/types');
+    this.typeTransaction$ = this.http.get<TypeTransaction[]>(`${environment.apiUrl}/transaction/types`);
 
   }
 
@@ -21,7 +21,7 @@ export class TransactionService {
   }
 
   createTypeTransaction(info: TypeTransaction) {
-    return this.http.post('/transaction/types', info)
+    return this.http.post(`${environment.apiUrl}/transaction/types`, info)
       .pipe(
         catchError((error: any) => {
           let message = "Unexpected error occurred";
@@ -39,7 +39,7 @@ export class TransactionService {
   }
 
   updateTypeTransaction(info: TypeTransaction) {
-    return this.http.put(`/transaction/types/${info.id}`, info).pipe(
+    return this.http.put(`${environment.apiUrl}/transaction/types/${info.id}`, info).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 
@@ -56,7 +56,7 @@ export class TransactionService {
   }
 
   removeTypeTransaction(id: number) {
-    return this.http.delete(`/transaction/type/${id}`).pipe(
+    return this.http.delete(`${environment.apiUrl}/transaction/type/${id}`).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 
@@ -79,11 +79,11 @@ export class TransactionService {
   }
 
   createTransactionHeader(info: TransactionHeaderBase) {
-    return this.http.post(`/transaction`, info);
+    return this.http.post(`${environment.apiUrl}/transaction`, info);
   }
 
   updateTransactionHeader(info: TransactionHeaderBase) {
-    return this.http.put(`/transaction/${info.id}`, info);
+    return this.http.put(`${environment.apiUrl}/transaction/${info.id}`, info);
   }
 
 }

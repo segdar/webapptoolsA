@@ -38,4 +38,18 @@ namespace webapptoolsA.Server.Models
     {
 
     }
+
+    public class RequestTransactionDetailDto : TransactionDetailBase
+    {
+        public TypeTransaction TypeTransaction { get; set; }
+    }
+
+    public class ResponseTransactionDetailDto : TransactionDetail
+    {
+        public string WarehouseName { get; set; }
+        public string ToolName { get; set; }
+        public string StatusToolName { get; set; }
+    }
+
+
 }

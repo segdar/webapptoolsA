@@ -12,6 +12,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     component: NavbarComponent, // layout wrapper with <router-outlet>
     children: [
+      { path: 'dashboard', loadComponent: () => import('./component/dashboard/dashboard.component').then(m => m.DashboardComponent)}, 
       { path: 'company', loadComponent: () => import('./component/cp-company/company/company.component').then(m => m.CompanyComponent) },
       { path: 'warehouse', loadComponent: () => import('./component/cp-warehouse/warehouse/warehouse.component').then(m => m.WarehouseComponent) },
       { path: 'category', loadComponent: () => import('./component/cp-category/category/category.component').then(m => m.CategoryComponent) },
@@ -21,7 +22,7 @@ export const routes: Routes = [
       { path: 'transaction', loadComponent: () => import('./component/cp-transaction/transaction-upsert/transaction-upsert.component').then(m => m.TransactionUpsertComponent)},
       {
         path: '',
-        redirectTo: 'company',
+        redirectTo: 'dashboard',
         pathMatch: 'full'
       }
     ]

@@ -50,11 +50,11 @@ namespace webapptoolsA.Server.Entities
         public virtual StatusTool? statustools { get; set; }
     }
 
-    public class Stock
+    public class Stocks
     {
-        public int IdTools { get; set; }
-        public int Warehouse { get; set; }
-        public int StockQuantity { get; set; }
+        public int IdCategory { get; set; }
+        public int IdWarehouse { get; set; }
+        public int Stock { get; set; }
 
     }
 }

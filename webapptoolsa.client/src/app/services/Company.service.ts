@@ -13,7 +13,7 @@ export class CompanyService {
   }
 
   getAll():Observable<CompanyDto[]> {
-    return this.http.get<CompanyDto[]>('/company').pipe(
+    return this.http.get<CompanyDto[]>(`${environment.apiUrl}/company`).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 
@@ -30,7 +30,7 @@ export class CompanyService {
   }
 
     create(info:Partial<CompanyDto>) {
-          return this.http.post<CompanyDto>('/company',info).pipe(
+          return this.http.post<CompanyDto>(`${environment.apiUrl}/company`,info).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 
@@ -47,7 +47,7 @@ export class CompanyService {
   }
 
   update(info: Partial<CompanyDto>) {
-    return this.http.put<CompanyDto>(`/company/${info.id}`,info).pipe(
+    return this.http.put<CompanyDto>(`${environment.apiUrl}/company/${info.id}`,info).pipe(
           catchError((error: any) => {
             let message = "Unexpected error occurred";
     

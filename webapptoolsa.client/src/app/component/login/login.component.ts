@@ -19,18 +19,16 @@ export class LoginComponent {
     if (this.email && this.password) {
       // Here you can call your API for login
       this._auth.getVerification({Username:this.email.trim(),Password:this.password.trim()}).subscribe({
-        next: (data) => {
-          this.router.navigate(['/company']);
-        }, 
+        next: () => this.router.navigate(['/dashboard']),
         error: (error)=> {
-          console.log("error",error);
+          
            alert('Usuario or constraseña invalida');
         }
       })
       
 
     } else {
-      alert('Usuario or constraseña invalida');
+      alert('Debe ingresar un usuario y contraseña');
     }
   }
 }

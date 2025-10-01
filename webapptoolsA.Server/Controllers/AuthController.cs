@@ -13,11 +13,13 @@ namespace webapptoolsA.Server.Controllers
     {
         private readonly IAuthService _authService;
         private readonly ICompanyService _companyService;
+        private readonly IUserService _userService;
 
-        public AuthController(IAuthService authService, ICompanyService companyService) 
+        public AuthController(IAuthService authService, ICompanyService companyService, IUserService userService)
         {
             _authService = authService;
             _companyService = companyService;
+            _userService = userService;
         }
 
         [HttpPost]
@@ -31,9 +33,9 @@ namespace webapptoolsA.Server.Controllers
             
         
         var access = await _companyService.GetCompaniesByIds(token.Info.Id);
+        var permission = await _userService.GetUserAccessAsync(token.Info.Idrole);
 
-
-        return Ok(new {  token.Token , access});
+            return Ok(new {  token.Token , access, permission });
         }
 
         [HttpPost("register")]

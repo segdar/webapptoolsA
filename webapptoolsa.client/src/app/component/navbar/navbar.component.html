@@ -7,65 +7,49 @@
      <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-         <li class="nav-item">
+         <li *ngIf="permissionService.canViewModule('Company')" class="nav-item">
            <a class="nav-link active" [routerLink]="['company']" aria-current="Empresas">Empresas</a>
          </li>
-         <li class="nav-item">
+         <li *ngIf="permissionService.canViewModule('Warehouse')" class="nav-item">
            <a class="nav-link" [routerLink]="['warehouse']" aria-current="sucursales">Sucurales</a>
          </li>
-         <li class="nav-item dropdown">
+         <li *ngIf="permissionService.canViewModule('ToolsOperators')" class="nav-item dropdown">
            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
              Herramientas
            </a>
            <ul class="dropdown-menu">
-             <li><a class="dropdown-item" [routerLink]="['category']">Categoria</a></li>
-             <li><a class="dropdown-item" [routerLink]="['conditional']">Estados</a></li>
-             <li><a class="dropdown-item" [routerLink]="['tools']">Herramienta</a></li>
+             <li *ngIf="permissionService.canViewModule('Category')" ><a class="dropdown-item" [routerLink]="['category']">Categoria</a></li>
+             <li *ngIf="permissionService.canViewModule('Conditional')"><a class="dropdown-item" [routerLink]="['conditional']">Estados</a></li>
+             <li *ngIf="permissionService.canViewModule('Tools')"><a class="dropdown-item" [routerLink]="['tools']">Herramienta</a></li>
            </ul>
          </li>
 
-         <li class="nav-item dropdown">
+         <li *ngIf="permissionService.canViewModule('Operators')" class="nav-item dropdown">
            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-current="movimientos">Movimientos</a>
            <ul class="dropdown-menu">
-             <li><a class="dropdown-item" [routerLink]="['typetransaction']">Tipo de Transacciones</a></li>
-             <li><a class="dropdown-item" [routerLink]="['transaction']">Movimientos</a></li>
+             <li *ngIf="permissionService.canViewModule('TypeTransaction')"><a class="dropdown-item" [routerLink]="['typetransaction']">Tipo de Transacciones</a></li>
+             <li *ngIf="permissionService.canViewModule('Transaction')"><a class="dropdown-item" [routerLink]="['transaction']">Movimientos</a></li>
            </ul>
          </li>
        </ul>
      </div>
 
-     <!--<div class="dropdown me-3">
-     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-       {{ displayText }}
-     </a>
-     <ul class="dropdown-menu">
-       <ng-container *ngFor="let company of companies">
-         <li><h6 class="dropdown-header">{{ company.name }}</h6></li>
-         <li *ngFor="let warehouse of company.warehouses">
-           <a class="dropdown-item" href="#" (click)="selectWarehouse(company.name, warehouse)">
-             {{ warehouse }}
-           </a>
-         </li>
-         <li><hr class="dropdown-divider"></li>
-       </ng-container>
-     </ul>
-   </div>
-  -->
+     
      <!-- Material-style Company/Warehouse dropdown -->
      <div class="d-flex align-items-center me-3">
        <button mat-button [matMenuTriggerFor]="companyMenu">
-         {{ displayText || 'Select Company / Warehouse' }}
+         {{ displayText() || 'Select Company / Warehouse' }}
          <mat-icon>arrow_drop_down</mat-icon>
        </button>
 
        <mat-menu #companyMenu="matMenu">
-         <ng-container *ngFor="let company of companies">
+         <ng-container *ngFor="let company of companies()">
            <button mat-menu-item disabled>
              <strong>{{ company.name }}</strong>
            </button>
            <button mat-menu-item *ngFor="let warehouse of company.warehouses"
-                   (click)="selectWarehouse(company.name, warehouse)">
-             {{ warehouse }}
+                   (click)="selectWarehouse(company.name, warehouse.name)">
+             {{ warehouse.name }}
            </button>
            <mat-divider></mat-divider>
          </ng-container>
@@ -75,9 +59,9 @@
        <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
          <div class="avatar-circle bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-2"
               style="width:35px; height:35px; font-weight:bold;">
-           {{ 'DS' }}
+           {{ usershort() }}
          </div>
-         {{ 'Darwin Segura' }}
+         {{ username() }}
        </a>
        <ul class="dropdown-menu dropdown-menu-end">
          <li><a class="dropdown-item" (click)="logout()">Logout</a></li>

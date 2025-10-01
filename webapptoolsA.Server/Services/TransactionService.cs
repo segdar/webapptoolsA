@@ -1,8 +1,10 @@
-﻿using Humanizer;
+﻿using Azure.Core;
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using webapptoolsA.Server.Data;
 using webapptoolsA.Server.Entities;
 using webapptoolsA.Server.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace webapptoolsA.Server.Services
 {
@@ -10,7 +12,7 @@ namespace webapptoolsA.Server.Services
     {
         Task<List<ResponseTransactionHeader>> GetAllAsync();
         Task<ResponseTransactionHeader?> GetByIdAsync(int id);
-        Task<ResponseTransactionHeader> CreateAsync(TransactionHeader transaction);
+        Task<ResponseTransactionHeader> CreateAsync(TransactionHeaderBase transaction);
         Task<ResponseTransactionHeader?> UpdateAsync(TransactionHeader transaction);
         Task<bool> DeleteAsync(int id);
 
@@ -24,6 +26,12 @@ namespace webapptoolsA.Server.Services
         Task<List<ResponseTypeTransactionDto>> GetAllAsyncType();
         Task<ResponseTypeTransactionDto?> UpdateAsyncType(RequestTypeTransactionDto updatedTypeTransaction);
         Task<bool> DeleteAsyncType(int id);
+
+        Task<ResponseTransactionDetailDto> CreateAsyncDetail(RequestTransactionDetailDto detail);
+        Task<ResponseTransactionDetailDto?> GetByIdAsyncDetail(int id);
+        Task<List<ResponseTransactionDetailDto>> GetAllAsyncDetail(int idHeader);
+        Task<ResponseTransactionDetailDto?> UpdateAsyncDetail(RequestTransactionDetailDto updatedDetail);
+        Task<bool> DeleteAsyncDetail(int id);
     }
     public class TransactionService :ITransactionService
     {
@@ -89,11 +97,24 @@ namespace webapptoolsA.Server.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<ResponseTransactionHeader> CreateAsync(TransactionHeader transaction)
+        public async Task<ResponseTransactionHeader> CreateAsync(TransactionHeaderBase transaction)
         {
-            _context.TransactionHeaderModels.Add(transaction);
+            var entity = new TransactionHeader
+            {
+                UserId = transaction.UserId,
+                Days = transaction.Days,
+                IdType = transaction.IdType,
+                Notes = transaction.Notes,
+                UserRecipt = transaction.UserRecipt,
+                IdProject = transaction.IdProject,
+                IdWarehouseOrigin = transaction.IdWarehouseOrigin,
+                IdWarehouseDestination = transaction.IdWarehouseDestination,
+                Status = transaction.Status
+            };
+            _context.TransactionHeaderModels.Add(entity);
             await _context.SaveChangesAsync();
             var transactionTmp = await _context.TransactionHeaderModels
+                .AsNoTracking()
                 .Where(t => t.Id == transaction.Id)
                 .Select(t => new ResponseTransactionHeader
                 {
@@ -335,6 +356,104 @@ namespace webapptoolsA.Server.Services
             _context.TypeTransactionModels.Remove(entity);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<ResponseTransactionDetailDto> CreateAsyncDetail(RequestTransactionDetailDto detail)
+        {
+
+                var entity = new TransactionDetail
+                {
+                    IdTransaction = detail.IdTransaction,
+                    IdWarehouse = detail.IdWarehouse,
+                    IdToolsType = detail.IdToolsType,
+                    IdStatusTools = detail.IdStatusTools,
+                    Quantity = detail.Quantity
+                };
+             _context.TransactionDetailsModels.Add(entity);
+
+
+
+            if (detail.TypeTransaction.Type == "I")
+            {
+                await UpdateStockAsync(detail.IdWarehouse, 1, detail.Quantity, true);
+            }
+            else
+            {
+                await UpdateStockAsync(detail.IdWarehouse, detail.IdToolsType, detail.Quantity, false);
+
+            }
+
+
+
+            await _context.SaveChangesAsync();
+            
+
+
+            var response = new ResponseTransactionDetailDto
+            {
+                IdDetailTransaction = entity.IdDetailTransaction,
+                IdTransaction = entity.IdTransaction,
+                IdWarehouse = entity.IdWarehouse,
+                WarehouseName = entity.Warehouse!.Name,
+                IdToolsType = entity.IdToolsType,
+                ToolName = entity.ToolsType!.Name,
+                IdStatusTools = entity.IdStatusTools,
+                StatusToolName = entity.ToolsType.Name,
+                Quantity = entity.Quantity
+            };
+
+            return response;
+        }
+
+        public Task<ResponseTransactionDetailDto?> GetByIdAsyncDetail(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ResponseTransactionDetailDto>> GetAllAsyncDetail(int idHeader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponseTransactionDetailDto?> UpdateAsyncDetail(RequestTransactionDetailDto updatedDetail)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteAsyncDetail(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        private async Task UpdateStockAsync(int warehouseId, int productId, int qty,bool isIngress)
+        {
+            var stock = await _context.StockModels
+                .FirstOrDefaultAsync(s => s.IdCategory == productId && s.IdWarehouse == warehouseId);
+
+            if (stock == null)
+            {
+                stock = new Stocks
+                {
+                    IdCategory = productId,
+                    IdWarehouse = warehouseId,
+                    Stock = 0
+                };
+                _context.StockModels.Add(stock);
+            }
+
+            if (isIngress)
+            {
+                stock.Stock += qty;
+            }
+            else
+            {
+                if (stock.Stock < qty)
+                    throw new InvalidOperationException($"Insufficient stock for Product {productId} in warehouse {warehouseId}");
+                stock.Stock -= qty;
+            }
+
+            _context.StockModels.Update(stock);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace webapptoolsA.Server.Data
             public DbSet<Tools> ToolsModels { get; set; }
             public DbSet<Category> CategoryModels { get; set; }
             public DbSet<StatusTool> StatusToolModels { get; set; }
-            public DbSet<Stock> StockModels { get; set; }
+            public DbSet<Stocks> StockModels { get; set; }
             public DbSet<User> UserModels { get; set; }
             public DbSet<TransactionHeader> TransactionHeaderModels { get; set; }
             public DbSet<TransactionDetail> TransactionDetailsModels { get; set; }
@@ -24,6 +24,9 @@ namespace webapptoolsA.Server.Data
             public DbSet<Project> ProjectModels { get; set; }
             public DbSet<Roles> RoleModels { get; set; }
             public DbSet<UserAccessCompany> UserAccessCompaniesModels { get; set; }
+            public DbSet<Module> ModulesModels { get; set; }
+            public DbSet<Permission> PermissionsModels { get; set; }
+            public DbSet<RoleModulePermission> RoleModulePermissionsModels { get; set; }
 
 
 
@@ -44,7 +47,7 @@ namespace webapptoolsA.Server.Data
                               .IsRequired();
                         entity.Property(e => e.code);
                         entity.HasOne(e => e.Company)
-                              .WithMany()
+                              .WithMany(e => e.Warehouses)
                               .HasForeignKey(e => e.CompanyId)
                               .OnDelete(DeleteBehavior.Restrict);
                         entity.HasOne(e => e.WarehouseFather)       // Each warehouse has one parent
@@ -107,11 +110,11 @@ namespace webapptoolsA.Server.Data
                   .IsRequired();
                   });
 
-                  modelBuilder.Entity<Stock>(entity =>
+                  modelBuilder.Entity<Stocks>(entity =>
                   {
                         entity.ToTable("stocks");
-                        entity.HasKey(e => new { e.IdTools, e.Warehouse }); // composite key
-                        entity.Property(e => e.StockQuantity);
+                        entity.HasKey(e => new { e.IdCategory, e.IdWarehouse }); // composite key
+                        entity.Property(e => e.Stock);
 
                   });
                     
@@ -155,16 +158,15 @@ namespace webapptoolsA.Server.Data
                   {
                         entity.ToTable("toolstransaction_header");
                         entity.HasKey(e => e.Id);
-                        entity.Property(e => e.Id).HasColumnName("id");
                         entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();
-                        entity.Property(e => e.UserRecipt).HasColumnName("user_recipt").IsRequired();
+                      entity.Property(e => e.UserRecipt).HasColumnName("user_recipt");
                         entity.Property(e => e.Days).HasColumnName("days");
                         entity.Property(e => e.IdType).HasColumnName("type").IsRequired();
                         entity.Property(e => e.Notes).HasColumnName("notes").HasMaxLength(255);
-                        entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                        entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("GETDATE()");
                         entity.Property(e => e.IdProject).HasColumnName("idproject");
                         entity.Property(e => e.IdWarehouseOrigin).HasColumnName("idwarehouseorigin").IsRequired();
-                        entity.Property(e => e.IdWarehouseDestination).HasColumnName("idwarehousedestination").IsRequired();
+                      entity.Property(e => e.IdWarehouseDestination).HasColumnName("idwarehousedestination");
                         entity.Property(e => e.Status).HasColumnName("status").IsRequired();
 
                         entity.HasOne(e => e.User)
@@ -204,9 +206,6 @@ namespace webapptoolsA.Server.Data
 
                         entity.HasKey(e => e.IdDetailTransaction);
 
-                        entity.Property(e => e.IdDetailTransaction)
-                        .HasColumnName("iddetailtransaction");
-
                         entity.Property(e => e.IdTransaction)
                         .HasColumnName("idtransaction")
                         .IsRequired();
@@ -219,16 +218,30 @@ namespace webapptoolsA.Server.Data
                         .HasColumnName("quantity")
                         .IsRequired();
 
-                        // Relationships
-                        entity.HasOne(e => e.Transaction)
-                        .WithMany(h => h.Details)
-                        .HasForeignKey(e => e.IdTransaction)
-                        .OnDelete(DeleteBehavior.Cascade);
+                        entity.Property(e => e.IdToolsType)
+                        .HasColumnName("idtoolstype")
+                        .IsRequired();
+                        entity.Property(e => e.IdStatusTools)
+                        .HasColumnName("idstatustools")
+                        .IsRequired();
+
+                      // Relationships
+                     
 
                         entity.HasOne(e => e.Warehouse)
                         .WithMany()
                         .HasForeignKey(e => e.IdWarehouse)
                         .OnDelete(DeleteBehavior.Restrict);
+
+                      entity.HasOne(e => e.ToolsType) 
+                        .WithMany()
+                        .HasForeignKey(e => e.IdToolsType)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                      entity.HasOne(e => e.TransactionHeader)
+                        .WithMany()
+                        .HasForeignKey(e => e.IdTransaction);
+
                   });
 
                   modelBuilder.Entity<Project>(entity =>
@@ -306,23 +319,54 @@ namespace webapptoolsA.Server.Data
                   modelBuilder.Entity<UserAccessCompany>(entity =>
                   {
                         entity.ToTable("usercompany");
-                        entity.HasKey(e => e.Id); 
-                        entity.Property(e => e.IdUser)
-                        .HasColumnName("user_id")
-                        .IsRequired();
-                        entity.Property(e => e.IdCompany)
-                        .HasColumnName("company_id")
-                        .IsRequired();
-                        // Relationships
-                        entity.HasOne<User>()
-                        .WithMany()
-                        .HasForeignKey(e => e.IdUser)
-                        .OnDelete(DeleteBehavior.Cascade);
-                        entity.HasOne<CompanyModel>()
-                        .WithMany()
-                        .HasForeignKey(e => e.IdCompany)
-                        .OnDelete(DeleteBehavior.Cascade);
+                        entity.HasKey(e => new { e.Id, e.IdUser, e.IdCompany });
+                      entity.Property(e => e.IdUser)
+        .HasColumnName("user_id"); // <-- map to actual column name
+
+                      entity.Property(e => e.IdCompany)
+                            .HasColumnName("company_id");
+                      entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.IdUser);
+
+                      entity.HasOne(e => e.Company)
+                      .WithMany()
+                      .HasForeignKey(e => e.IdCompany);
+                       
                   });
+
+                  modelBuilder.Entity<Module>(entity =>
+                    {
+                        entity.ToTable("modules");
+                        entity.HasKey(m => m.IdModule);
+                        entity.Property(m => m.ModuleName).HasMaxLength(100);
+                    });
+
+                    modelBuilder.Entity<Permission>(entity =>
+                    {
+                        entity.ToTable("permissions");
+                        entity.HasKey(p => p.IdPermission);
+                        entity.Property(p => p.PermissionName).HasMaxLength(50);
+                    });
+
+            modelBuilder.Entity<RoleModulePermission>(entity =>
+            {
+                entity.ToTable("roleModulePermissions");
+                entity.HasKey(rmp => new { rmp.IdRole, rmp.IdModule, rmp.IdPermission });
+
+                entity.HasOne(rmp => rmp.Role)
+                      .WithMany()
+                      .HasForeignKey(rmp => rmp.IdRole);
+
+                entity.HasOne(rmp => rmp.Module)
+                      .WithMany()
+                      .HasForeignKey(rmp => rmp.IdModule);
+
+                entity.HasOne(rmp => rmp.Permission)
+                      .WithMany()
+                      .HasForeignKey(rmp => rmp.IdPermission);
+            });
+
 
         }
       }

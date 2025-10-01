@@ -11,7 +11,7 @@ export class WarehouseService {
 
 
     constructor(private http: HttpClient) {
-      this.warehouse =  this.http.get<Warehouse[]>('/warehouse').pipe(
+      this.warehouse =  this.http.get<Warehouse[]>(`${environment.apiUrl}/warehouse`).pipe(
       catchError((error: any) => {
         let message = "Unexpected error occurred";
 
@@ -32,7 +32,7 @@ export class WarehouseService {
       }
 
       create(info:Partial<Warehouse>) {
-        return this.http.post<Warehouse>('/warehouse',info).pipe(
+        return this.http.post<Warehouse>(`${environment.apiUrl}/warehouse`,info).pipe(
               catchError((error: any) => {
                 let message = "Unexpected error occurred";
         
@@ -49,7 +49,7 @@ export class WarehouseService {
       }
 
       update(info:Partial<Warehouse>) {
-        return this.http.put<Warehouse>(`/warehouse/${info.id}`,info).pipe(
+        return this.http.put<Warehouse>(`${environment.apiUrl}/warehouse/${info.id}`,info).pipe(
               catchError((error: any) => {
                 let message = "Unexpected error occurred";
         

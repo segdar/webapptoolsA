@@ -24,4 +24,13 @@ namespace webapptoolsA.Server.Models
         public string Token { get; set; }
         public ResponseInfoUser Info { get; set; }
     }
+
+
+    public class ResponseModuleAccessDto
+    {
+        public string ModuleName { get; set; }
+        public List<string> Actions { get; set; }
+    }
+
+    
 }
