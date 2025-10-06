@@ -34,3 +34,6 @@ yarn-error.log*
 /webapptoolsA.Server/appsettings.json
 /bin/Debug
 /obj
+/bin/Release
+/webapptoolsa.client/obj/Release
+/webapptoolsA.Server/bin/Release/net8.0
