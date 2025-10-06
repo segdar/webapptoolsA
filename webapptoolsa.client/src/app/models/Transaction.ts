@@ -1,3 +1,4 @@
+
 export interface TypeTransaction {
   id: number | null;
   code: string;
@@ -25,10 +26,10 @@ export interface TransactionHeaderBase {
   days: number | null;
   idType: number;
   notes: string | null;
-  userRecipt: number;
+  userRecipt: number|null;
   idProject: number | null;
   idWarehouseOrigin: number;
-  idWarehouseDestination: number;
+  idWarehouseDestination: number | null;
   createdAt: Date | null;  
   status: number;
 }
@@ -41,5 +42,21 @@ export interface TransactionHeaderDto extends TransactionHeaderBase {
   nameTypeTransaction: string;
   nameProject: string;
 }
+
+export interface TransactionDetailBaseDto {
+  idDetailTransaction: number;  
+  idTransaction: number;
+  idWarehouse: number;
+  idToolsType: number;
+  idStatusTools: number;
+  quantity: number;
+}
+
+export interface TransactionDetail extends TransactionDetailBaseDto {
+  toolTypeName: string;
+  statusToolName: string;
+}
+
+export type TransactionDetailDisplayTable = Pick<TransactionDetail, 'idToolsType'|'toolTypeName' |'quantity'>
 
 

@@ -5,6 +5,7 @@ import { tap } from "rxjs";
 import { AccessCompanyDto, JwtPayload, ModuleAccessDto} from "../models/Users";
 import { decodeToken } from "../shared/Shared";
 import { PermissionService } from "../services/PermissionService";
+import { environment } from "../../environment";
 
 @Injectable({
   providedIn: 'root'

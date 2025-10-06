@@ -1,3 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://webapptoolsa.server:8081'
+  apiUrl: 'http://localhost:8081'
+}

@@ -1,12 +1,39 @@
-FROM node:20-alpine
+#Build stage
+FROM node:20-alpine AS build
+
+# Set working directory
 WORKDIR /app
 
+# Copy package.json and install dependencies
 COPY package*.json ./
-RUN npm install -g @angular/cli@18.2.0
 RUN npm install
+RUN npm install -g @angular/cli@18.2.0
 
+# Copy source code
 COPY . .
 
-EXPOSE 4200
+# Build the Angular app for production
+RUN ng build --configuration production
 
-CMD ["ng", "serve", "--host", "0.0.0.0", "--poll", "2000","--configuration", "docker"]
+# Para depuración (temporal)
+RUN ls -l /app/dist
+RUN ls -l /app/dist/webapptoolsa.client
+
+# 2️⃣ Serve stage
+FROM nginx:alpine
+
+# Remove default nginx static files
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy built Angular app from previous stage
+COPY --from=build /app/dist/webapptoolsa.client/browser/ /usr/share/nginx/html
+
+RUN chmod -R 755 /usr/share/nginx/html
+# Copy custom Nginx config (optional)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Category, ConditionalTools, Tools, ToolsDto } from "../models/Tools";
 import { catchError, Observable, shareReplay, throwError } from "rxjs";
+import { environment } from "../../environment";
 
 @Injectable({
     providedIn: 'root'

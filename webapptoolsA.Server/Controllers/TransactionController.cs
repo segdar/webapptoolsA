@@ -140,8 +140,41 @@ namespace webapptoolsA.Server.Controllers
         public async Task<IActionResult> CreateTransactionDetail([FromBody] RequestTransactionDetailDto Detail)
         {
             var created = await _transactionService.CreateAsyncDetail(Detail);
-            return CreatedAtAction(nameof(GetTransactionById), new { id = created.IdDetailTransaction }, created);
+            return CreatedAtAction(nameof(GetTransactionDetailById), new { id = created.IdDetailTransaction }, created);
         }
+
+        [HttpDelete("detail/{id}")]
+        public async Task<IActionResult> DeleteTransactionDetail(int id, string typeTransaction)
+        {
+            var deleted = await _transactionService.DeleteAsyncDetail(id,typeTransaction);
+            if (!deleted) return NotFound();
+            return NoContent();
+        }
+
+        [HttpPut("detail/{id}")]
+        public async Task<IActionResult> UpdateTransactionDetail(int id, [FromBody] RequestTransactionDetailDto detail)
+        {
+            if (id != detail.IdDetailTransaction) return BadRequest("ID mismatch");
+            var updated = await _transactionService.UpdateAsyncDetail(detail);
+            if (updated == null) return NotFound();
+            return Ok(updated);
+        }
+
+        [HttpGet("detail/{id}")]
+        public async Task<IActionResult> GetTransactionDetailById(int id)
+        {
+            var result = await _transactionService.GetByIdAsyncDetail(id);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+        [HttpGet("details")]
+        public async Task<IActionResult> GetAllTransactionDetails(int idheader)
+        {
+            var result = await _transactionService.GetAllAsyncDetail(idheader);
+            return Ok(result);
+        }
+
 
 
 

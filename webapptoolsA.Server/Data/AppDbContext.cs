@@ -202,31 +202,32 @@ namespace webapptoolsA.Server.Data
 
                   modelBuilder.Entity<TransactionDetail>(entity =>
                   {
-                        entity.ToTable("toolstransaction_detail");
+                      entity.ToTable("toolstransaction_detail");
 
-                        entity.HasKey(e => e.IdDetailTransaction);
+                      entity.HasKey(e => e.IdDetailTransaction);
 
-                        entity.Property(e => e.IdTransaction)
-                        .HasColumnName("idtransaction")
-                        .IsRequired();
+                      entity.Property(e => e.IdTransaction)
+                      .HasColumnName("idtransaction")
+                      .IsRequired();
 
-                        entity.Property(e => e.IdWarehouse)
-                        .HasColumnName("idwarehouse")
-                        .IsRequired();
+                      entity.Property(e => e.IdWarehouse)
+                      .HasColumnName("idwarehouse")
+                      .IsRequired();
 
-                        entity.Property(e => e.Quantity)
-                        .HasColumnName("quantity")
-                        .IsRequired();
+                      entity.Property(e => e.Quantity)
+                      .HasColumnName("quantity")
+                      .IsRequired();
 
-                        entity.Property(e => e.IdToolsType)
-                        .HasColumnName("idtoolstype")
-                        .IsRequired();
-                        entity.Property(e => e.IdStatusTools)
-                        .HasColumnName("idstatustools")
-                        .IsRequired();
+                      entity.Property(e => e.IdToolsType)
+                      .HasColumnName("idtoolstype")
+                      .IsRequired();
+                      entity.Property(e => e.IdStatusTools)
+                      .HasColumnName("idstatustools")
+                      .IsRequired();
 
                       // Relationships
-                     
+
+                      
 
                         entity.HasOne(e => e.Warehouse)
                         .WithMany()
@@ -239,8 +240,9 @@ namespace webapptoolsA.Server.Data
                         .OnDelete(DeleteBehavior.Restrict);
 
                       entity.HasOne(e => e.TransactionHeader)
-                        .WithMany()
-                        .HasForeignKey(e => e.IdTransaction);
+                        .WithMany(e => e.Details)
+                        .HasForeignKey(e => e.IdTransaction)
+                        .OnDelete(DeleteBehavior.Restrict);
 
                   });
 

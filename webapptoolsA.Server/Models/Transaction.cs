@@ -2,6 +2,8 @@
 
 namespace webapptoolsA.Server.Models
 {
+
+
     public class RequestTransactionHeader : TransactionHeaderBase
     {
     }
@@ -39,15 +41,24 @@ namespace webapptoolsA.Server.Models
 
     }
 
-    public class RequestTransactionDetailDto : TransactionDetailBase
+
+    public class TransactionDetailBaseDto
+    {
+        public int? IdDetailTransaction { get; set; }
+        public int IdTransaction { get; set; }
+        public int IdWarehouse { get; set; }
+        public int IdToolsType { get; set; }
+        public int IdStatusTools { get; set; }
+        public int Quantity { get; set; }
+    }
+    public class RequestTransactionDetailDto : TransactionDetailBaseDto
     {
         public TypeTransaction TypeTransaction { get; set; }
     }
 
-    public class ResponseTransactionDetailDto : TransactionDetail
+    public class ResponseTransactionDetailDto : TransactionDetailBaseDto
     {
-        public string WarehouseName { get; set; }
-        public string ToolName { get; set; }
+        public string ToolTypeName { get; set; }
         public string StatusToolName { get; set; }
     }
 

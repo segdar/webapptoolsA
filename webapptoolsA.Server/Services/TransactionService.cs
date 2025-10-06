@@ -31,7 +31,7 @@ namespace webapptoolsA.Server.Services
         Task<ResponseTransactionDetailDto?> GetByIdAsyncDetail(int id);
         Task<List<ResponseTransactionDetailDto>> GetAllAsyncDetail(int idHeader);
         Task<ResponseTransactionDetailDto?> UpdateAsyncDetail(RequestTransactionDetailDto updatedDetail);
-        Task<bool> DeleteAsyncDetail(int id);
+        Task<bool> DeleteAsyncDetail(int id, string typeTransaction);
     }
     public class TransactionService :ITransactionService
     {
@@ -115,7 +115,7 @@ namespace webapptoolsA.Server.Services
             await _context.SaveChangesAsync();
             var transactionTmp = await _context.TransactionHeaderModels
                 .AsNoTracking()
-                .Where(t => t.Id == transaction.Id)
+                .Where(t => t.Id == entity.Id)
                 .Select(t => new ResponseTransactionHeader
                 {
                     Id = t.Id,
@@ -335,6 +335,7 @@ namespace webapptoolsA.Server.Services
             var existing = await _context.TypeTransactionModels.FindAsync(updatedTypeTransaction.Id);
             if (existing == null) return null;
 
+
             _context.Entry(existing).CurrentValues.SetValues(updatedTypeTransaction);
             await _context.SaveChangesAsync();
             return new ResponseTypeTransactionDto
@@ -360,69 +361,154 @@ namespace webapptoolsA.Server.Services
 
         public async Task<ResponseTransactionDetailDto> CreateAsyncDetail(RequestTransactionDetailDto detail)
         {
-
-                var entity = new TransactionDetail
-                {
-                    IdTransaction = detail.IdTransaction,
-                    IdWarehouse = detail.IdWarehouse,
-                    IdToolsType = detail.IdToolsType,
-                    IdStatusTools = detail.IdStatusTools,
-                    Quantity = detail.Quantity
-                };
-             _context.TransactionDetailsModels.Add(entity);
-
-
-
-            if (detail.TypeTransaction.Type == "I")
+            var entity = new TransactionDetail
             {
-                await UpdateStockAsync(detail.IdWarehouse, 1, detail.Quantity, true);
-            }
-            else
-            {
-                await UpdateStockAsync(detail.IdWarehouse, detail.IdToolsType, detail.Quantity, false);
+                IdTransaction = detail.IdTransaction,
+                IdWarehouse = detail.IdWarehouse,
+                IdToolsType = detail.IdToolsType,
+                IdStatusTools = detail.IdStatusTools,
+                Quantity = detail.Quantity
+            };
 
-            }
-
-
+            _context.TransactionDetailsModels.Add(entity);
+           
+            bool isIngress = detail.TypeTransaction.Type == "I";
+            await UpdateStockAsync(entity.IdWarehouse, entity.IdToolsType, entity.Quantity, isIngress);
 
             await _context.SaveChangesAsync();
             
-
-
             var response = new ResponseTransactionDetailDto
             {
                 IdDetailTransaction = entity.IdDetailTransaction,
                 IdTransaction = entity.IdTransaction,
                 IdWarehouse = entity.IdWarehouse,
-                WarehouseName = entity.Warehouse!.Name,
                 IdToolsType = entity.IdToolsType,
-                ToolName = entity.ToolsType!.Name,
+                ToolTypeName = entity.ToolsType?.Name ?? "",       
                 IdStatusTools = entity.IdStatusTools,
-                StatusToolName = entity.ToolsType.Name,
+                StatusToolName = entity.ToolsType != null && entity.ToolsType.objcategory != null ? entity.ToolsType.objcategory.Name : "",
                 Quantity = entity.Quantity
             };
 
             return response;
         }
 
-        public Task<ResponseTransactionDetailDto?> GetByIdAsyncDetail(int id)
+        public async Task<ResponseTransactionDetailDto?> GetByIdAsyncDetail(int id)
         {
-            throw new NotImplementedException();
+            var detailDto = await _context.TransactionDetailsModels
+                .Where(d => d.IdDetailTransaction == id)
+                .Select(d => new ResponseTransactionDetailDto
+                {
+                    IdDetailTransaction = d.IdDetailTransaction,
+                    IdTransaction = d.IdTransaction,
+                    IdWarehouse = d.IdWarehouse,
+                    IdToolsType = d.IdToolsType,
+                    ToolTypeName = d.ToolsType != null ? d.ToolsType.Name : "",
+                    IdStatusTools = d.IdStatusTools,
+                    StatusToolName = d.ToolsType != null && d.ToolsType.objcategory != null ? d.ToolsType.objcategory.Name : "",
+                    Quantity = d.Quantity
+                })
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            return detailDto;
         }
 
-        public Task<List<ResponseTransactionDetailDto>> GetAllAsyncDetail(int idHeader)
+        public async Task<List<ResponseTransactionDetailDto>> GetAllAsyncDetail(int idHeader)
         {
-            throw new NotImplementedException();
+            var details = await _context.TransactionDetailsModels
+                 .AsNoTracking()
+                 .Where(d => d.IdTransaction == idHeader)
+                 .Select(d => new ResponseTransactionDetailDto
+                 {
+                     IdDetailTransaction = d.IdDetailTransaction,
+                     IdTransaction = d.IdTransaction,
+                     IdWarehouse = d.IdWarehouse,
+                     IdToolsType = d.IdToolsType,
+                     ToolTypeName = d.ToolsType != null ? d.ToolsType.Name : "",
+                     IdStatusTools = d.IdStatusTools,
+                     StatusToolName = d.ToolsType != null && d.ToolsType.objcategory != null ? d.ToolsType.objcategory.Name : "",
+                     Quantity = d.Quantity
+                 })
+                 .ToListAsync();
+
+            return details;
         }
 
-        public Task<ResponseTransactionDetailDto?> UpdateAsyncDetail(RequestTransactionDetailDto updatedDetail)
+        public async Task<ResponseTransactionDetailDto?> UpdateAsyncDetail(RequestTransactionDetailDto updatedDetail)
         {
-            throw new NotImplementedException();
+            var existingDetail = await _context.TransactionDetailsModels
+                .FirstOrDefaultAsync(d => d.IdDetailTransaction == updatedDetail.IdDetailTransaction);
+
+            if (existingDetail == null)
+            {
+                return null; // Not found
+            }
+
+            var categoryID = existingDetail.ToolsType?.objcategory?.Id ?? 0;
+            var oldQty = existingDetail.Quantity;
+            var newQty = updatedDetail.Quantity;
+
+            if (updatedDetail.TypeTransaction.Type == "I")
+            {
+                await UpdateStockAsync(updatedDetail.IdWarehouse, categoryID, oldQty, false);
+                await UpdateStockAsync(updatedDetail.IdWarehouse, categoryID, newQty, true);
+            }
+            else
+            {
+                await UpdateStockAsync(updatedDetail.IdWarehouse, categoryID, oldQty, true);
+                await UpdateStockAsync(updatedDetail.IdWarehouse, categoryID, newQty, false);
+
+            }
+
+            var result = await _context.TransactionDetailsModels
+                    .Where(d => d.IdDetailTransaction == updatedDetail.IdDetailTransaction)
+                    .Select(d => new ResponseTransactionDetailDto
+                    {
+                        IdDetailTransaction = d.IdDetailTransaction,
+                        IdTransaction = d.IdTransaction,
+                        IdWarehouse = d.IdWarehouse,
+                        IdToolsType = d.IdToolsType,
+                        ToolTypeName = d.ToolsType != null ? d.ToolsType.Name : "",
+                        IdStatusTools = d.IdStatusTools,
+                        StatusToolName = d.ToolsType != null && d.ToolsType.objcategory != null ? d.ToolsType.objcategory.Name : "",
+                        Quantity = d.Quantity
+                    })
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+            return result;
         }
 
-        public Task<bool> DeleteAsyncDetail(int id)
+        public async Task<bool> DeleteAsyncDetail(int id, string typeTransaction)
         {
-            throw new NotImplementedException();
+            var detail = await _context.TransactionDetailsModels
+                 .Include(d => d.ToolsType)
+                 .ThenInclude(t => t.objcategory)
+                 .FirstOrDefaultAsync(d => d.IdDetailTransaction == id);
+
+            if (detail == null)
+                return false; 
+
+          
+            var categoryID = detail.ToolsType?.objcategory?.Id ?? 0;
+            bool isIngress = typeTransaction == "I";
+
+            if (isIngress)
+            {
+                
+                await UpdateStockAsync(detail.IdWarehouse, categoryID, detail.Quantity, false);
+            }
+            else
+            {
+                
+                await UpdateStockAsync(detail.IdWarehouse, categoryID, detail.Quantity, true);
+            }
+
+            
+            _context.TransactionDetailsModels.Remove(detail);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
 
@@ -453,7 +539,7 @@ namespace webapptoolsA.Server.Services
                 stock.Stock -= qty;
             }
 
-            _context.StockModels.Update(stock);
+            await _context.SaveChangesAsync();
         }
     }
 }

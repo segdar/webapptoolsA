@@ -1,4 +1,4 @@
-import { Component, inject} from '@angular/core';
+import { Component, inject, Input} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,6 +24,7 @@ export class ToolsComponent extends BaseCrudTableComponent<Tools> {
 
   private _toolsService = inject(ToolsServices);
 
+
   getAll() {
     return this._toolsService.getTools();
   }
@@ -32,5 +33,7 @@ export class ToolsComponent extends BaseCrudTableComponent<Tools> {
       data: { ...entity }
     })
   }
+
+  
 
 }

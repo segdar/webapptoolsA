@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { TransactionHeaderBase, TransactionHeaderDto, TypeTransaction } from "../models/Transaction";
 import { catchError, Observable, throwError } from "rxjs";
 import { HttpClient } from "@angular/common/http";
+import { environment } from "../../environment";
 
 
 @Injectable({
